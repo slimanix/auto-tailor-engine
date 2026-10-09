@@ -11,6 +11,8 @@ from engine import AutoTailorEngine
 
 class JobHunter:
     def __init__(self, profile_path: str, output_base_dir: str = "applications"):
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.jobs_cache_file = os.path.join(self.base_dir, "hunted_jobs.json")
         self.output_base_dir = output_base_dir
         self.engine = AutoTailorEngine(profile_path)
         try:
