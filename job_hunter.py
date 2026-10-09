@@ -13,8 +13,14 @@ class JobHunter:
     def __init__(self, profile_path: str, output_base_dir: str = "applications"):
         self.output_base_dir = output_base_dir
         self.engine = AutoTailorEngine(profile_path)
-        self.jobs_cache_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hunted_jobs.json")
-        os.makedirs(self.output_base_dir, exist_ok=True)
+        try:
+            os.makedirs(self.output_base_dir, exist_ok=True)
+        except OSError:
+            self.output_base_dir = os.path.join("/tmp", output_base_dir)
+            try:
+                os.makedirs(self.output_base_dir, exist_ok=True)
+            except Exception:
+                pass
         
         self.ssl_ctx = ssl.create_default_context()
         self.ssl_ctx.check_hostname = False
