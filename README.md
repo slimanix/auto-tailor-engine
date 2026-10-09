@@ -137,5 +137,5 @@ Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your browser.
 **Abderrahmane El Idrissi Slimani**  
 - **Location**: Rabat, Morocco  
 - **LinkedIn**: [linkedin.com/in/abderrahmane-el-idrissi-slimani](https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/)  
-- **GitHub**: [github.com/abderrahmane-elidrissi](https://github.com/abderrahmane-elidrissi)  
+- **GitHub**: [github.com/slimanix](https://github.com/slimanix)  
 - **Email**: `elidrissislimaniabderrahmane@gmail.com`

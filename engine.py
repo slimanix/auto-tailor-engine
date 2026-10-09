@@ -667,7 +667,7 @@ Abderrahmane El Idrissi Slimani
         <div class="subtitle">{display_title}</div>
         <div class="contact-line">
             {p['location']} &nbsp;•&nbsp; {p['phone']} &nbsp;•&nbsp; {p['email']}<br>
-            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/abderrahmane-elidrissi</a>
+            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/slimanix</a>
         </div>
     </div>
 
