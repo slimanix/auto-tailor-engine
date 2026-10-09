@@ -1,0 +1,10 @@
+.env
+*.env
+applications/
+output/
+tests/
+__pycache__/
+*.pyc
+test_cv.*
+*.tmp
+.git/
