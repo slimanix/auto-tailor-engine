@@ -814,20 +814,29 @@ class JobHunter:
                 "created_at": time.strftime("%Y-%m-%d %H:%M")
             }
 
-            clean_comp = re.sub(r'[^a-zA-Z0-9_-]', '_', job["company"])[:20]
-            job_dir = os.path.join(self.output_base_dir, f"{job['id']}_{clean_comp}")
-            os.makedirs(job_dir, exist_ok=True)
+            try:
+                clean_comp = re.sub(r'[^a-zA-Z0-9_-]', '_', job["company"])[:20]
+                job_dir = os.path.join(self.output_base_dir, f"{job['id']}_{clean_comp}")
+                try:
+                    os.makedirs(job_dir, exist_ok=True)
+                except OSError:
+                    job_dir = os.path.join("/tmp", "applications", f"{job['id']}_{clean_comp}")
+                    try:
+                        os.makedirs(job_dir, exist_ok=True)
+                    except Exception:
+                        pass
 
-            html_p = os.path.join(job_dir, "CV_1Page.html")
-            pdf_p = os.path.join(job_dir, "CV_1Page.pdf")
-            with open(html_p, "w", encoding="utf-8") as f:
-                f.write(tailored["html_resume"])
-            with open(os.path.join(job_dir, "CV_1Page.md"), "w", encoding="utf-8") as f:
-                f.write(tailored["markdown_resume"])
-            with open(os.path.join(job_dir, "Cover_Letter.txt"), "w", encoding="utf-8") as f:
-                f.write(tailored["cover_letter"])
-            with open(os.path.join(job_dir, "Recruiter_DM.txt"), "w", encoding="utf-8") as f:
-                f.write(recruiter_dm)
+                html_p = os.path.join(job_dir, "CV_1Page.html")
+                with open(html_p, "w", encoding="utf-8") as f:
+                    f.write(tailored["html_resume"])
+                with open(os.path.join(job_dir, "CV_1Page.md"), "w", encoding="utf-8") as f:
+                    f.write(tailored["markdown_resume"])
+                with open(os.path.join(job_dir, "Cover_Letter.txt"), "w", encoding="utf-8") as f:
+                    f.write(tailored["cover_letter"])
+                with open(os.path.join(job_dir, "Recruiter_DM.txt"), "w", encoding="utf-8") as f:
+                    f.write(recruiter_dm)
+            except Exception:
+                pass
 
             new_hunted_jobs.append(job_entry)
 
@@ -932,20 +941,29 @@ class JobHunter:
 
             # Save application package to disk if ATS score meets threshold
             if job_entry["ats_score"] >= min_ats_score:
-                clean_comp = re.sub(r'[^a-zA-Z0-9_-]', '_', job["company"])[:20]
-                job_dir = os.path.join(self.output_base_dir, f"{job['id']}_{clean_comp}")
-                os.makedirs(job_dir, exist_ok=True)
+                try:
+                    clean_comp = re.sub(r'[^a-zA-Z0-9_-]', '_', job["company"])[:20]
+                    job_dir = os.path.join(self.output_base_dir, f"{job['id']}_{clean_comp}")
+                    try:
+                        os.makedirs(job_dir, exist_ok=True)
+                    except OSError:
+                        job_dir = os.path.join("/tmp", "applications", f"{job['id']}_{clean_comp}")
+                        try:
+                            os.makedirs(job_dir, exist_ok=True)
+                        except Exception:
+                            pass
 
-                html_path = os.path.join(job_dir, "CV_1Page.html")
-                pdf_path = os.path.join(job_dir, "CV_1Page.pdf")
-                with open(html_path, "w", encoding="utf-8") as f:
-                    f.write(tailored["html_resume"])
-                with open(os.path.join(job_dir, "CV_1Page.md"), "w", encoding="utf-8") as f:
-                    f.write(tailored["markdown_resume"])
-                with open(os.path.join(job_dir, "Cover_Letter.txt"), "w", encoding="utf-8") as f:
-                    f.write(tailored["cover_letter"])
-                with open(os.path.join(job_dir, "Recruiter_DM.txt"), "w", encoding="utf-8") as f:
-                    f.write(recruiter_dm)
+                    html_path = os.path.join(job_dir, "CV_1Page.html")
+                    with open(html_path, "w", encoding="utf-8") as f:
+                        f.write(tailored["html_resume"])
+                    with open(os.path.join(job_dir, "CV_1Page.md"), "w", encoding="utf-8") as f:
+                        f.write(tailored["markdown_resume"])
+                    with open(os.path.join(job_dir, "Cover_Letter.txt"), "w", encoding="utf-8") as f:
+                        f.write(tailored["cover_letter"])
+                    with open(os.path.join(job_dir, "Recruiter_DM.txt"), "w", encoding="utf-8") as f:
+                        f.write(recruiter_dm)
+                except Exception:
+                    pass
 
             new_hunted_jobs.append(job_entry)
 

@@ -340,7 +340,14 @@ class AutoApplier:
         # Build application folder
         clean_comp = re.sub(r'[^a-zA-Z0-9_-]', '_', company)[:20]
         app_folder = os.path.join(self.base_app_dir, f"{job_id}_{clean_comp}")
-        os.makedirs(app_folder, exist_ok=True)
+        try:
+            os.makedirs(app_folder, exist_ok=True)
+        except OSError:
+            app_folder = os.path.join("/tmp", "applications", f"{job_id}_{clean_comp}")
+            try:
+                os.makedirs(app_folder, exist_ok=True)
+            except Exception:
+                pass
 
         cv_html_path = os.path.join(app_folder, "CV_1Page.html")
         cv_pdf_path = os.path.join(app_folder, "CV_1Page.pdf")
@@ -348,24 +355,41 @@ class AutoApplier:
         cover_letter_path = os.path.join(app_folder, "Cover_Letter.txt")
         recruiter_dm_path = os.path.join(app_folder, "Recruiter_DM.txt")
 
-        # Save files
-        if not os.path.exists(cv_html_path) and job.get("html_resume"):
-            with open(cv_html_path, "w", encoding="utf-8") as f:
-                f.write(job["html_resume"])
+        # Save files safely
+        try:
+            if not os.path.exists(cv_html_path) and job.get("html_resume"):
+                with open(cv_html_path, "w", encoding="utf-8") as f:
+                    f.write(job["html_resume"])
+        except Exception:
+            pass
 
         # Convert to strict 1-page A4 PDF
-        if os.path.exists(cv_html_path) and not os.path.exists(cv_pdf_path):
-            self.convert_html_to_pdf(cv_html_path, cv_pdf_path)
+        try:
+            if os.path.exists(cv_html_path) and not os.path.exists(cv_pdf_path):
+                self.convert_html_to_pdf(cv_html_path, cv_pdf_path)
+        except Exception:
+            pass
 
-        if not os.path.exists(cv_md_path) and job.get("markdown_resume"):
-            with open(cv_md_path, "w", encoding="utf-8") as f:
-                f.write(job["markdown_resume"])
-        if not os.path.exists(cover_letter_path) and job.get("cover_letter"):
-            with open(cover_letter_path, "w", encoding="utf-8") as f:
-                f.write(job["cover_letter"])
-        if not os.path.exists(recruiter_dm_path) and job.get("recruiter_dm"):
-            with open(recruiter_dm_path, "w", encoding="utf-8") as f:
-                f.write(job["recruiter_dm"])
+        try:
+            if not os.path.exists(cv_md_path) and job.get("markdown_resume"):
+                with open(cv_md_path, "w", encoding="utf-8") as f:
+                    f.write(job["markdown_resume"])
+        except Exception:
+            pass
+
+        try:
+            if not os.path.exists(cover_letter_path) and job.get("cover_letter"):
+                with open(cover_letter_path, "w", encoding="utf-8") as f:
+                    f.write(job["cover_letter"])
+        except Exception:
+            pass
+
+        try:
+            if not os.path.exists(recruiter_dm_path) and job.get("recruiter_dm"):
+                with open(recruiter_dm_path, "w", encoding="utf-8") as f:
+                    f.write(job["recruiter_dm"])
+        except Exception:
+            pass
 
         # ── Determine method and ACTUALLY apply ────────────────────────────
 
@@ -527,10 +551,26 @@ class AutoApplier:
                 f'{entry["followup_date"]},{entry["url"]},{apply_url}'
             )
 
-        with open(md_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(md_lines))
+        try:
+            with open(md_file, "w", encoding="utf-8") as f:
+                f.write("\n".join(md_lines))
+        except OSError:
+            try:
+                tmp_md = os.path.join("/tmp", "Application_Report.md")
+                with open(tmp_md, "w", encoding="utf-8") as f:
+                    f.write("\n".join(md_lines))
+            except Exception:
+                pass
 
-        with open(csv_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(csv_lines))
+        try:
+            with open(csv_file, "w", encoding="utf-8") as f:
+                f.write("\n".join(csv_lines))
+        except OSError:
+            try:
+                tmp_csv = os.path.join("/tmp", "Application_Report.csv")
+                with open(tmp_csv, "w", encoding="utf-8") as f:
+                    f.write("\n".join(csv_lines))
+            except Exception:
+                pass
 
         print(f"[AutoApplier] Reports saved - {total_sent} emails sent, {total_links} apply links ready.")

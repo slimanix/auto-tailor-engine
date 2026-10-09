@@ -205,7 +205,8 @@ def update_application_status():
 @app.route("/api/apply/report/md", methods=["GET"])
 def get_report_md():
     """Return the Markdown report as plain text."""
-    md_path = os.path.join(base_dir, "Application_Report.md")
+    tmp_path = os.path.join("/tmp", "Application_Report.md")
+    md_path = tmp_path if os.path.exists(tmp_path) else os.path.join(base_dir, "Application_Report.md")
     if os.path.exists(md_path):
         with open(md_path, "r", encoding="utf-8") as f:
             return Response(f.read(), mimetype="text/plain")
@@ -214,7 +215,8 @@ def get_report_md():
 @app.route("/api/apply/report/csv", methods=["GET"])
 def get_report_csv():
     """Download the CSV report."""
-    csv_path = os.path.join(base_dir, "Application_Report.csv")
+    tmp_path = os.path.join("/tmp", "Application_Report.csv")
+    csv_path = tmp_path if os.path.exists(tmp_path) else os.path.join(base_dir, "Application_Report.csv")
     if os.path.exists(csv_path):
         with open(csv_path, "r", encoding="utf-8") as f:
             return Response(
