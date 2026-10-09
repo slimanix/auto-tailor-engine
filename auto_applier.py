@@ -24,6 +24,7 @@ class AutoApplier:
     def __init__(self, profile_path: str, log_file: str = "applications_log.json", base_app_dir: str = "applications"):
         self.profile_path = profile_path
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.base_app_dir = base_app_dir
         try:
             os.makedirs(self.base_app_dir, exist_ok=True)
         except OSError:
