@@ -134,12 +134,15 @@ class AutoTailorEngine:
         company_name = target_company if target_company.strip() else ("l'équipe de recrutement" if lang == "fr" else "the Hiring Team")
         role_name = target_role if target_role.strip() else ("ce poste" if lang == "fr" else "this position")
 
+        p = self.profile
+        portfolio_url = p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')
+
         if track == "support_ops":
             if lang == "fr":
                 return f"""Abderrahmane El Idrissi Slimani
 Rabat, Maroc | +212 762 609 561
 elidrissislimaniabderrahmane@gmail.com
-LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani
+LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani | Portfolio: {portfolio_url}
 
 Objet : Candidature au poste de {role_name}
 
@@ -163,7 +166,7 @@ Abderrahmane El Idrissi Slimani
                 return f"""Abderrahmane El Idrissi Slimani
 Rabat, Morocco | +212 762 609 561
 elidrissislimaniabderrahmane@gmail.com
-LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani
+LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani | Portfolio: {portfolio_url}
 
 Subject: Application for {role_name}
 
@@ -190,7 +193,7 @@ Abderrahmane El Idrissi Slimani
             return f"""Abderrahmane El Idrissi Slimani
 Rabat, Maroc | +212 762 609 561
 elidrissislimaniabderrahmane@gmail.com
-LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani
+LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani | Portfolio: {portfolio_url}
 
 Objet : Candidature au poste de {role_name}
 
@@ -198,7 +201,7 @@ Madame, Monsieur,
 
 C’est avec un vif enthousiasme que je vous adresse ma candidature pour le poste de **{role_name}** au sein de **{company_name}**. Titulaire d'une Licence Spécialisée en Big Data de l'ENSA Kénitra et d'un Diplôme de Technicien Spécialisé en Développement Full-Stack, mon parcours combine une rigueur logicielle approfondie et une capacité éprouvée à délivrer des solutions à fort impact.
 
-Lors de mes récentes expériences, j’ai notamment conçu et déployé un système complet de détection d'anomalies par Deep Learning chez 3D Smart Factory, intégrant un modèle TensorFlow à une interface web réactive (React, Tailwind CSS) via des APIs REST sécurisées. Parallèlement, mon expérience opérationnelle chez Foundever pour le compte de FedEx m’a permis de développer une réactivité exemplaire face aux incidents critiques, un sens aigu de la relation client internationale et une maîtrise rigoureuse des engagements SLA.
+Lors de mes récentes expériences, j’ai notamment conçu et déployé un système complet de détection de malwares par Deep Learning chez 3D Smart Factory (projet MalwaresInspector avec inférence optimisée LiteRT), intégrant un modèle TensorFlow à une interface web réactive (React, Tailwind CSS) via des APIs REST sécurisées. Vous pouvez d'ailleurs retrouver mes projets déployés et démonstrations interactives sur mon portfolio : {portfolio_url}. Parallèlement, mon expérience opérationnelle chez Foundever pour le compte de FedEx m’a permis de développer une réactivité exemplaire face aux incidents critiques, un sens aigu de la relation client internationale et une maîtrise rigoureuse des engagements SLA.
 
 Rejoindre **{company_name}** représente pour moi l'opportunité de mettre au service de vos projets ma polyvalence technique, mon autonomie et mon enthousiasme à résoudre des problématiques complexes. Parfaitement trilingue (Français, Anglais, Arabe), je m'intègre avec agilité au sein d'équipes pluridisciplinaires et internationales.
 
@@ -212,7 +215,7 @@ Abderrahmane El Idrissi Slimani
             return f"""Abderrahmane El Idrissi Slimani
 Rabat, Morocco | +212 762 609 561
 elidrissislimaniabderrahmane@gmail.com
-LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani
+LinkedIn: linkedin.com/in/abderrahmane-el-idrissi-slimani | Portfolio: {portfolio_url}
 
 Subject: Application for {role_name}
 
@@ -220,7 +223,7 @@ Dear Hiring Team at {company_name},
 
 I am writing to express my strong enthusiasm for the **{role_name}** position at **{company_name}**. Holding a Bachelor’s in Big Data Engineering from ENSA Kénitra alongside an Associate Degree in Full-Stack Web Development, my background uniquely bridges production-grade software engineering with advanced predictive analytics.
 
-During my work at 3D Smart Factory, I architected and deployed an end-to-end Deep Learning malware detection engine, serving inference models through RESTful APIs into a modern React and Tailwind CSS user interface. Furthermore, my operational experience managing high-priority client incidents for FedEx at Foundever has honed my capacity to troubleshoot under pressure, analyze systemic bottlenecks, and adhere strictly to high-standard SLAs.
+During my work at 3D Smart Factory, I architected and deployed an end-to-end Deep Learning malware detection engine (MalwaresInspector project, live with optimized LiteRT inference), serving inference models through RESTful APIs into a modern React and Tailwind CSS user interface. You can explore my full portfolio of live production projects at {portfolio_url}. Furthermore, my operational experience managing high-priority client incidents for FedEx at Foundever has honed my capacity to troubleshoot under pressure, analyze systemic bottlenecks, and adhere strictly to high-standard SLAs.
 
 {company_name}’s commitment to engineering excellence strongly resonates with my goals. Trilingual in English, French, and Arabic, I bring proven adaptability, solid code hygiene (Git, clean APIs), and a proactive problem-solving mindset that enables me to contribute value from day one.
 
@@ -326,6 +329,13 @@ Abderrahmane El Idrissi Slimani
             for b in exp['bullets']:
                 lines.append(f"- {b}")
             lines.append("")
+
+        portfolio_url = p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')
+        proj_sec = "PROJETS EN PRODUCTION & PORTFOLIO" if lang == "fr" else "LIVE PRODUCTION PROJECTS & PORTFOLIO"
+        lines.append(f"## {proj_sec}")
+        lines.append(f"- **MalwaresInspector (AI Cybersecurity):** Détection de malwares par Deep Learning (CNN VGG-16 quantifié LiteRT, <150ms de latence cloud) — [Démo Live](https://malwares-detector.vercel.app/) | [Code GitHub](https://github.com/slimanix/MalwersDetector)")
+        lines.append(f"- **Auto-Tailor Engine (Full-Stack & ATS):** Radar multi-plateformes d'offres et moteur d'adaptation de CVs vectoriels A4 — [Démo Live](https://autotailorengine.vercel.app) | [Code GitHub](https://github.com/slimanix/auto-tailor-engine)")
+        lines.append(f"- **Portfolio & Showcase Hub:** Vitrine d'ingénierie et projets déployés — [Accéder au Portfolio]({portfolio_url})\n")
 
         lines.append(f"## {edu_sec}")
         for edu in p["education"][lang]:
@@ -440,6 +450,8 @@ Abderrahmane El Idrissi Slimani
             skill_row_3_val = "Git, GitHub, Linux, Docker, CRM Ticketing, Power BI, Jupyter, Méthodes Agiles"
 
         lang_label = "Langues de Travail" if lang == "fr" else "Languages"
+        portfolio_url = p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')
+        portfolio_display = portfolio_url.replace("https://", "").replace("http://", "").rstrip("/")
 
         return f"""<!DOCTYPE html>
 <html lang="{lang}">
@@ -667,7 +679,7 @@ Abderrahmane El Idrissi Slimani
         <div class="subtitle">{display_title}</div>
         <div class="contact-line">
             {p['location']} &nbsp;•&nbsp; {p['phone']} &nbsp;•&nbsp; {p['email']}<br>
-            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/slimanix</a> &nbsp;•&nbsp; Portfolio: <a href="{p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')}">slimanix.dev</a>
+            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/slimanix</a> &nbsp;•&nbsp; Portfolio: <a href="{portfolio_url}">{portfolio_display}</a>
         </div>
     </div>
 

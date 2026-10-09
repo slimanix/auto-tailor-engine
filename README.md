@@ -136,6 +136,7 @@ Open **[http://127.0.0.1:5000](http://127.0.0.1:5000)** in your browser.
 ## 👤 Author
 **Abderrahmane El Idrissi Slimani**  
 - **Location**: Rabat, Morocco  
+- **Portfolio Showcase**: [portfolio-showcase-psi-sooty.vercel.app](https://portfolio-showcase-psi-sooty.vercel.app)
 - **LinkedIn**: [linkedin.com/in/abderrahmane-el-idrissi-slimani](https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/)  
 - **GitHub**: [github.com/slimanix](https://github.com/slimanix)  
 - **Email**: `elidrissislimaniabderrahmane@gmail.com`

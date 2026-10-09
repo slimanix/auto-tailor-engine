@@ -46,15 +46,18 @@ def tailor_job():
     result = engine.tailor_application(job_desc, company, role, lang)
     is_fr  = result["lang"] == "fr"
 
+    portfolio_url = "https://portfolio-showcase-psi-sooty.vercel.app"
     recruiter_dm = (
         f"Bonjour,\n\nJe me permets de vous contacter suite à la publication de votre offre pour le poste de {role or 'Développeur'}"
         f"{' chez ' + company if company else ''}. Diplômé en Big Data (ENSA Kénitra) et Full-Stack, mon parcours allie expertise "
-        f"technique (React, Python, Deep Learning) et rigueur opérationnelle. Je serais ravi d'échanger brièvement avec vous !\n\n"
+        f"technique (React, Python, Deep Learning) et rigueur opérationnelle. Vous pouvez consulter mon portfolio et démos de projets ici : {portfolio_url}\n\n"
+        f"Je serais ravi d'échanger brièvement avec vous !\n\n"
         f"Bien cordialement,\nAbderrahmane El Idrissi Slimani"
         if is_fr else
         f"Hi there,\n\nI noticed the {role or 'Software Engineer'} opening{' at ' + company if company else ''} and wanted to reach out "
         f"directly. With a Bachelor's in Big Data (ENSA Kénitra) and hands-on experience in Full-Stack (React, Python, REST APIs) and "
-        f"Deep Learning, I'm confident I can make an immediate impact. Would love to connect!\n\n"
+        f"Deep Learning, I'm confident I can make an immediate impact. You can review my live production projects on my portfolio: {portfolio_url}\n\n"
+        f"Would love to connect!\n\n"
         f"Best regards,\nAbderrahmane El Idrissi Slimani"
     )
     result["recruiter_dm"] = recruiter_dm

@@ -186,5 +186,28 @@
     "web_dev": ["React", "JavaScript (ES6+)", "Tailwind CSS", "HTML5", "CSS3", "REST APIs", "Python", "SpringBoot (Java)", "Laravel (PHP)", "SQL", "Git", "GitHub"],
     "support_ops": ["Incident Management (N1/N2)", "Enterprise CRM", "Mail Trace", "SLA Management", "Root Cause Analysis", "Customer Relationship", "Troubleshooting", "System Triage", "Reporting"],
     "tools": ["Git", "GitHub", "Jupyter Notebook", "Anaconda", "Power BI", "RESTful Architecture", "Linux", "VS Code"]
-  }
+  },
+  "featured_projects": [
+    {
+      "name": "MalwaresInspector",
+      "tagline": "AI-Powered Malware Detection Command Center",
+      "description": "Système d'analyse de fichiers binaires par Deep Learning (CNN VGG-16, LiteRT) déployé en serverless cloud.",
+      "url": "https://malwares-detector.vercel.app/",
+      "github": "https://github.com/slimanix/MalwersDetector"
+    },
+    {
+      "name": "Auto-Tailor Engine & Job Hunter",
+      "tagline": "Dual-Track ATS Resume Tailoring & Moroccan Radar",
+      "description": "Plateforme web full-stack d'automatisation des candidatures avec génération de CV vectoriel A4 et radar d'offres.",
+      "url": "https://autotailorengine.vercel.app",
+      "github": "https://github.com/slimanix/auto-tailor-engine"
+    },
+    {
+      "name": "Engineering Portfolio Showcase",
+      "tagline": "Interactive Live Projects & Credentials Showcase",
+      "description": "Vitrine interactive présentant l'ensemble des projets en production, métriques clés et parcours d'ingénierie.",
+      "url": "https://portfolio-showcase-psi-sooty.vercel.app",
+      "github": "https://github.com/slimanix/portfolio-showcase"
+    }
+  ]
 }

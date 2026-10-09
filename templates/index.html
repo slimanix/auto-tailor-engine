@@ -1130,6 +1130,9 @@
                 <p>
                     <span>Abderrahmane El Idrissi Slimani</span>
                     <span class="candidate-pill"><span class="live-dot"></span> CDI Foundever (FedEx) • Rabat</span>
+                    <a href="https://portfolio-showcase-psi-sooty.vercel.app" target="_blank" style="color: #60a5fa; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; background: rgba(59,130,246,0.15); padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(59,130,246,0.35);" title="Portfolio &amp; Live Projects Showcase">
+                        <span>🌐</span> <span>Portfolio Showcase ↗</span>
+                    </a>
                     <a href="https://github.com/slimanix" target="_blank" style="color: #cbd5e1; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border);" title="GitHub Profile">
                         <span>🐙</span> <span>slimanix</span>
                     </a>
@@ -1985,7 +1988,7 @@ async function quickSendEmail(jobId, recipientEmail, jobTitle, company) {
 Assurez-vous que GMAIL_APP_PASSWORD est configuré.`)) return;
 
     const subject = `Candidature — ${jobTitle} chez ${company} | Abderrahmane El Idrissi Slimani`;
-    const body = `Madame, Monsieur,\n\nJe vous contacte suite à votre offre pour le poste de ${jobTitle} chez ${company}.\n\nDiplômé en Big Data (ENSA Kénitra) et Technicien Spécialisé Full-Stack, je dispose d'une expérience solide en gestion de flux client, résolution d'incidents, outils informatiques et respect strict des SLAs. Vous trouverez en pièce jointe mon CV personnalisé à votre offre.\n\nJe serais ravi de vous présenter mon profil lors d'un entretien à votre convenance.\n\nBien cordialement,\nAbderrahmane El Idrissi Slimani\n+212 762 609 561 | elidrissislimaniabderrahmane@gmail.com`;
+    const body = `Madame, Monsieur,\n\nJe vous contacte suite à votre offre pour le poste de ${jobTitle} chez ${company}.\n\nDiplômé en Big Data (ENSA Kénitra) et Technicien Spécialisé Full-Stack, je dispose d'une expérience solide en gestion de flux client, résolution d'incidents, outils informatiques et respect strict des SLAs. Vous trouverez en pièce jointe mon CV personnalisé à votre offre, ainsi que mes projets en production sur mon portfolio : https://portfolio-showcase-psi-sooty.vercel.app\n\nJe serais ravi de vous présenter mon profil lors d'un entretien à votre convenance.\n\nBien cordialement,\nAbderrahmane El Idrissi Slimani\n+212 762 609 561 | elidrissislimaniabderrahmane@gmail.com`;
 
     try {
         const res = await fetch('/api/apply/send_email', {

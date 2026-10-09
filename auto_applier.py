@@ -105,7 +105,7 @@ class AutoApplier:
                     f"Bien cordialement,\n"
                     f"{name}\n"
                     f"{phone} | {email}\n"
-                    f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/"
+                    f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/ | Portfolio: https://portfolio-showcase-psi-sooty.vercel.app"
                 )
             else:
                 subject = f"Application — {title} | {name}"
@@ -120,7 +120,7 @@ class AutoApplier:
                     f"Best regards,\n"
                     f"{name}\n"
                     f"{phone} | {email}\n"
-                    f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/"
+                    f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/ | Portfolio: https://portfolio-showcase-psi-sooty.vercel.app"
                 )
             return {"subject": subject, "body": body}
 
@@ -143,7 +143,7 @@ class AutoApplier:
                 f"Bien cordialement,\n"
                 f"{name}\n"
                 f"{phone} | {email}\n"
-                f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/"
+                f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/ | Portfolio: https://portfolio-showcase-psi-sooty.vercel.app"
             )
         else:
             subject = f"Application — {title} | {name}"
@@ -159,12 +159,12 @@ class AutoApplier:
                 f"I am currently working as a Customer Service Representative at "
                 f"Foundever (FedEx project) and am looking for an opportunity that "
                 f"better leverages my technical skills.\n\n"
-                f"Please find my tailored CV attached. "
+                f"Please find my tailored CV attached. You can also explore my deployed live projects on my portfolio: https://portfolio-showcase-psi-sooty.vercel.app\n\n"
                 f"I would welcome the opportunity to discuss this role further.\n\n"
                 f"Best regards,\n"
                 f"{name}\n"
                 f"{phone} | {email}\n"
-                f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/"
+                f"LinkedIn: https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/ | Portfolio: https://portfolio-showcase-psi-sooty.vercel.app"
             )
 
         return {"subject": subject, "body": body}
