@@ -1,0 +1,189 @@
+{
+  "name": "Abderrahmane El Idrissi Slimani",
+  "location": "Rabat, Morocco",
+  "phone": "+212 762 609 561",
+  "email": "elidrissislimaniabderrahmane@gmail.com",
+  "linkedin": "https://www.linkedin.com/in/abderrahmane-el-idrissi-slimani/",
+  "github": "https://github.com/abderrahmane-elidrissi",
+  "languages": {
+    "fr": ["Arabe (Maternelle)", "Français (Courant / Professionnel C1)", "Anglais (Courant / Professionnel C1)"],
+    "en": ["Arabic (Native)", "French (Fluent / Professional C1)", "English (Fluent / Professional C1)"]
+  },
+  "education": {
+    "fr": [
+      {
+        "degree": "Licence Spécialisée en Big Data",
+        "institution": "ENSA Kénitra (École Nationale des Sciences Appliquées)",
+        "period": "10/2024 – 08/2025",
+        "highlights": "Ingénierie des données, architectures distribuées, modélisation statistique avancée, Machine Learning et Deep Learning."
+      },
+      {
+        "degree": "Diplôme de Technicien Spécialisé en Développement Full-Stack",
+        "institution": "ISTA Chmaou",
+        "period": "07/2022 – 06/2024",
+        "highlights": "Conception logicielle, architecture web moderne, bases de données relationnelles, APIs RESTful."
+      }
+    ],
+    "en": [
+      {
+        "degree": "Bachelor’s Degree in Big Data Engineering",
+        "institution": "ENSA Kénitra (National School of Applied Sciences)",
+        "period": "10/2024 – 08/2025",
+        "highlights": "Data engineering, distributed architectures, advanced statistical modeling, Machine Learning & Deep Learning."
+      },
+      {
+        "degree": "Associate Degree / Technician Diploma in Full-Stack Web Development",
+        "institution": "ISTA Chmaou",
+        "period": "07/2022 – 06/2024",
+        "highlights": "Software design, modern web architectures, relational databases, RESTful APIs."
+      }
+    ]
+  },
+  "certifications": [
+    {
+      "name": "Deep Learning & Neural Networks Specialization",
+      "issuer": "DeepLearning.AI",
+      "credential_id": "1JPZ5RUYTIPP"
+    },
+    {
+      "name": "Introduction to TensorFlow for AI, ML & Deep Learning",
+      "issuer": "DeepLearning.AI",
+      "credential_id": "E8MQBWLOC7CF"
+    },
+    {
+      "name": "Google Data Analytics Professional Certificate",
+      "issuer": "Google",
+      "credential_id": "UKWMOOOWAMAY / V5Z80SPO8CJN"
+    },
+    {
+      "name": "Meta Front-End Developer Specialization (React, JavaScript, HTML/CSS, Git)",
+      "issuer": "Meta",
+      "credential_id": "MISTC8IOKXNM / 7QCJXJ0Z6BR6"
+    },
+    {
+      "name": "Introduction to Data Engineering",
+      "issuer": "IBM",
+      "credential_id": "BKIXZHKZB18H"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "foundever",
+      "company": "Foundever (FedEx Project)",
+      "location": "Rabat, Morocco",
+      "period": "07/2025 – Present",
+      "fr": {
+        "title_general": "Chargé des Opérations & Support Client Stratégique (CDI)",
+        "title_support": "Technical Support & Operations Specialist (CDI)",
+        "bullets_support": [
+          "Prise en charge et résolution d'incidents complexes N1/N2 pour le compte de FedEx en respectant des SLAs stricts de résolution (<24h).",
+          "Exploitation quotidienne des outils CRM et systèmes de traçabilité Mail Trace pour l'audit, le suivi des anomalies et la conformité.",
+          "Collaboration étroite avec les équipes d'exploitation logistique et IT pour identifier les goulots d'étranglement et réduire le taux de réclamation de 15%.",
+          "Traitement trilingue (Français/Anglais/Arabe) de dossiers critiques avec un score de satisfaction client (CSAT) supérieur aux objectifs."
+        ],
+        "bullets_tech": [
+          "Gestion des incidents opérationnels et flux de données logistiques en temps réel sous CRM d'entreprise pour le compte de FedEx.",
+          "Diagnostic et résolution d'anomalies de processus métier en collaboration directe avec les équipes support et exploitation.",
+          "Analyse quotidienne des indicateurs de performance (SLA, délais d'acheminement, taux de résolution au premier contact).",
+          "Communication professionnelle trilingue dans un environnement international à haute exigence."
+        ]
+      },
+      "en": {
+        "title_general": "Operations & Client Operations Specialist (Permanent / CDI)",
+        "title_support": "Technical Support & Operations Specialist (CDI)",
+        "bullets_support": [
+          "Handled and resolved Tier 1 / Tier 2 operational and systems incidents for FedEx, consistently maintaining strict SLA targets.",
+          "Utilized enterprise CRM systems and Mail Trace tracking software for end-to-end incident traceability, triage, and root-cause resolution.",
+          "Collaborated directly with cross-functional IT and logistics teams to streamline escalation workflows, reducing recurring issues by 15%.",
+          "Delivered trilingual (French/English/Arabic) incident communication for high-priority business accounts, maintaining high customer satisfaction ratings."
+        ],
+        "bullets_tech": [
+          "Monitored live logistics data flows and resolved system tracking discrepancies in enterprise CRM environments for FedEx.",
+          "Conducted triage and root cause investigations for operational anomalies, working alongside technical support engineers.",
+          "Tracked key SLA operational metrics and generated daily status reports to improve overall operational turnaround time.",
+          "Collaborated seamlessly across multicultural and international stakeholders in English and French."
+        ]
+      }
+    },
+    {
+      "id": "3d_smart_factory",
+      "company": "3D Smart Factory",
+      "location": "Rabat, Morocco",
+      "period": "02/2025 – 07/2025",
+      "fr": {
+        "title_ai": "Data Scientist & Deep Learning Engineer (Stage)",
+        "title_web": "Développeur Web Full-Stack & Intégration IA (Stage)",
+        "bullets_ai": [
+          "Conception et entraînement d'une architecture Deep Learning (TensorFlow) pour la détection automatisée de malwares et anomalies système.",
+          "Pipeline complet d'ingénierie des données : nettoyage de millions de logs système, feature engineering et réduction de dimensionnalité.",
+          "Optimisation des performances du modèle atteignant une précision supérieure à 94% avec une réduction significative des faux positifs.",
+          "Déploiement et conteneurisation du modèle au travers d'une API REST et intégration dans une interface web réactive (React, Tailwind CSS)."
+        ],
+        "bullets_web": [
+          "Développement complet d'une application web de supervision de sécurité intégrant un moteur d'inférence Deep Learning.",
+          "Création d'une interface utilisateur moderne, responsive et intuitive avec React et Tailwind CSS.",
+          "Conception et sécurisation d'APIs REST en Python pour le streaming et l'analyse de données système en temps réel.",
+          "Gestion du versionnement de code sous Git/GitHub et mise en place de tests d'intégration applicative."
+        ]
+      },
+      "en": {
+        "title_ai": "Data Scientist & Deep Learning Engineer (Internship)",
+        "title_web": "Full-Stack Web & AI Integration Engineer (Internship)",
+        "bullets_ai": [
+          "Architected and trained a Deep Learning model (TensorFlow) for automated system malware and anomaly detection.",
+          "Built an end-to-end data pipeline: cleaned and processed high-volume raw system logs, engineered discriminatory features, and handled class imbalance.",
+          "Optimized model evaluation metrics, achieving >94% classification accuracy with minimized false-positive rates.",
+          "Packaged and deployed model inference endpoints via REST APIs integrated with a responsive web dashboard (React, Tailwind CSS)."
+        ],
+        "bullets_web": [
+          "Built a modern full-stack web application integrating an AI/Deep Learning backend for real-time anomaly analysis.",
+          "Designed and implemented responsive, high-performance UI components with React and Tailwind CSS.",
+          "Developed robust REST APIs in Python for secure communication between frontend dashboards and backend analytics engines.",
+          "Practiced standard software engineering lifecycles including Git/GitHub version control, modular architecture, and integration tests."
+        ]
+      }
+    },
+    {
+      "id": "hubblemind",
+      "company": "HubbleMind",
+      "location": "Rabat, Morocco",
+      "period": "10/2024 – 11/2024",
+      "fr": {
+        "title_ai": "Data Scientist / Machine Learning Analyst (Stage)",
+        "title_web": "Data & Software Integration Analyst (Stage)",
+        "bullets_ai": [
+          "Réalisation d'une étude prédictive des niveaux d'obésité basée sur des données comportementales et démographiques complexes.",
+          "Analyse exploratoire des données (EDA) approfondie avec Pandas, NumPy, Matplotlib et Seaborn.",
+          "Entraînement et comparaison d'algorithmes de classification (Régression Logistique, Random Forest) avec optimisation des hyperparamètres.",
+          "Évaluation rigoureuse des modèles (F1-score, matrices de confusion, feature importance) et présentation des insights décisionnels."
+        ],
+        "bullets_web": [
+          "Exploration, structuration et nettoyage automatisé de jeux de données multi-sources à l'aide de scripts Python.",
+          "Conception de tableaux de bord analytiques et visualisations dynamiques facilitant la prise de décision stratégique.",
+          "Documentation technique complète des analyses et automatisation des pipelines de reporting."
+        ]
+      },
+      "en": {
+        "title_ai": "Data Scientist / Machine Learning Analyst (Internship)",
+        "title_web": "Data & Software Analyst (Internship)",
+        "bullets_ai": [
+          "Conducted an end-to-end predictive analytics study modeling obesity levels using behavioral and demographic datasets.",
+          "Performed rigorous Exploratory Data Analysis (EDA) and data cleansing using Pandas, NumPy, Matplotlib, and Seaborn.",
+          "Trained and benchmarked multiple Machine Learning classifiers (Logistic Regression, Random Forest) with hyperparameter tuning.",
+          "Evaluated model performance using Confusion Matrices, Precision-Recall curves, and Feature Importance analysis to drive actionable insights."
+        ],
+        "bullets_web": [
+          "Automated data extraction, preprocessing, and validation pipelines using Python scripting.",
+          "Built dynamic data visualizations and reports that translated complex metrics into clear executive insights.",
+          "Documented reproducible analytical workflows and data schemas for cross-functional teams."
+        ]
+      }
+    }
+  ],
+  "skills_bank": {
+    "ai_ml": ["Python", "TensorFlow", "Scikit-Learn", "Deep Learning", "Machine Learning", "Neural Networks", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Feature Engineering", "Data Modeling", "Predictive Analytics", "EDA"],
+    "web_dev": ["React", "JavaScript (ES6+)", "Tailwind CSS", "HTML5", "CSS3", "REST APIs", "Python", "SpringBoot (Java)", "Laravel (PHP)", "SQL", "Git", "GitHub"],
+    "support_ops": ["Incident Management (N1/N2)", "Enterprise CRM", "Mail Trace", "SLA Management", "Root Cause Analysis", "Customer Relationship", "Troubleshooting", "System Triage", "Reporting"],
+    "tools": ["Git", "GitHub", "Jupyter Notebook", "Anaconda", "Power BI", "RESTful Architecture", "Linux", "VS Code"]
+  }
+}

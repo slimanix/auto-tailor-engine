@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto-Tailor Engine & Job Hunter — Abderrahmane</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #0b1120;
+        --card: #1e293b;
+        --card-hover: #24344d;
+        --border: #334155;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --accent: #10b981;
+        --accent-warn: #f59e0b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    .container { max-width: 1320px; margin: 0 auto; }
+    
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+    }
+    .logo-area h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .logo-area p { color: var(--text-muted); font-size: 12.5px; margin-top: 3px; }
+    
+    .nav-modes {
+        display: flex;
+        background: #0f172a;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        gap: 6px;
+    }
+    .mode-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 8px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .mode-btn.active {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    /* Single Tailor Layout */
+    .grid { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
+    @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+    
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+    }
+    .card-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .input-group { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+    input, select, textarea {
+        width: 100%;
+        background: #090f1d;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 12px;
+        color: var(--text);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    textarea { resize: vertical; height: 180px; line-height: 1.4; }
+    
+    .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+    button {
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
+        padding: 9px 15px;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: white; flex: 1; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #334155; color: #e2e8f0; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-success { background: var(--accent); color: white; }
+    .btn-success:hover { background: #059669; }
+
+    /* Results */
+    .metrics-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .metric-card {
+        background: #090f1d;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+    }
+    .metric-card .val { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .metric-card .lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+    .tag-group { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+    .tag { font-size: 11px; padding: 3px 8px; border-radius: 5px; font-weight: 500; }
+    .tag-matched { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-missing { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-track { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tag-source { background: #334155; color: #cbd5e1; }
+
+    .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 12px; gap: 6px; }
+    .tab { padding: 7px 12px; cursor: pointer; font-size: 12.5px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .output-box {
+        background: #090f1d;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        font-family: 'Fira Code', monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+        color: #cbd5e1;
+        line-height: 1.45;
+    }
+    .action-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+    .iframe-preview { width: 100%; height: 460px; background: white; border-radius: 8px; border: none; }
+
+    /* Job Hunter Feed View */
+    .hunter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card);
+        padding: 16px 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 18px;
+    }
+    .hunter-controls { display: flex; gap: 10px; align-items: center; }
+    .job-list { display: flex; flex-direction: column; gap: 12px; }
+    .job-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        transition: all 0.2s;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+    }
+    .job-card:hover { border-color: var(--primary); background: var(--card-hover); }
+    .job-info h3 { font-size: 16px; font-weight: 600; color: white; display: flex; align-items: center; gap: 8px; }
+    .job-meta { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .job-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    
+    .ats-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 700;
+    }
+    .ats-high { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .ats-med { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+    /* Modal */
+    .modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .modal-content {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        width: 100%;
+        max-width: 950px;
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-body { padding: 18px 20px; overflow-y: auto; flex: 1; }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo-area">
+            <h1>⚡ Auto-Tailor Engine & Job Hunter</h1>
+            <p>Candidate: Abderrahmane El Idrissi Slimani | Rabat, Morocco</p>
+        </div>
+        <div class="nav-modes">
+            <button class="mode-btn active" onclick="switchMode('hunter')">🤖 Automated Job Hunter</button>
+            <button class="mode-btn" onclick="switchMode('directory')">🇲🇦 Moroccan Recruitment Directory (30+ Platforms)</button>
+            <button class="mode-btn" onclick="switchMode('tailor')">🎯 Custom Job Tailor</button>
+            <button class="mode-btn" onclick="switchMode('apply')" style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);">📬 Auto-Apply &amp; Report</button>
+        </div>
+    </header>
+
+    <!-- VIEW 1: Automated Job Hunter -->
+    <div id="view-hunter" class="view-section active">
+        <!-- Radar Mode Switcher Bar -->
+        <div style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+            <button id="radarBtnBPO" class="mode-btn active" onclick="setRadarFilter('bpo')" style="background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.4); padding: 9px 18px; font-size: 13.5px;">
+                🎧 Centres d'Appels &amp; Back-Office Radar (Rabat / Salé / Télétravail)
+            </button>
+            <button id="radarBtnTech" class="mode-btn" onclick="setRadarFilter('tech')" style="background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 9px 18px; font-size: 13.5px;">
+                💻 Tech, IT &amp; Data Radar (React, Python, Cloud)
+            </button>
+            <button id="radarBtnAll" class="mode-btn" onclick="setRadarFilter('all')" style="background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 9px 18px; font-size: 13.5px;">
+                🌐 Tout Afficher (Toutes Offres)
+            </button>
+        </div>
+
+        <div class="hunter-header">
+            <div>
+                <h2 style="font-size: 16px; font-weight: 600;" id="hunterTitle">🎧 Radar Opportunités Centres d'Appels &amp; Back-Office (Rabat, Salé &amp; Remote)</h2>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;" id="hunterStatusText">
+                    Surveillance en direct sur MonCallCenter.ma, Rekrute BPO, Marocannonces et LinkedIn. Candidatures sur-mesure mettant en avant votre CDI Foundever (FedEx), gestion CRM, indicateurs SLA et parfaite maîtrise trilingue (FR/EN/AR).
+                </p>
+            </div>
+            <div class="hunter-controls" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn-success" id="btnScanBPO" onclick="scanBPOLive()" style="background: linear-gradient(135deg, #db2777 0%, #ec4899 100%);">
+                    🎧 Scanner Centres d'Appels &amp; Back-Office (Live)
+                </button>
+                <button class="btn-secondary" id="btnScanTech" onclick="scanTechLive()">
+                    💻 Scanner Tech &amp; IT
+                </button>
+                <button class="btn-secondary" id="btnScanAll" onclick="scanLiveJobs()">
+                    ⚡ Scanner Tout
+                </button>
+            </div>
+        </div>
+
+        <!-- BPO & Call Centers Hub Quick Launchers -->
+        <div id="bpoLaunchers" class="card" style="margin-bottom: 14px; padding: 14px 18px; border-color: rgba(236,72,153,0.3); background: rgba(236,72,153,0.03);">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #f472b6; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>🎧 Portails &amp; Pôles BPO Directs (Rabat &amp; Salé Technopolis)</span>
+                <span style="font-size: 11px; font-weight: 400; color: #94a3b8;">(Cliquez pour voir les postes en cours, puis collez dans Custom Tailor)</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <a href="https://www.moncallcenter.ma/q-offres/?Ville=Rabat" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🎧 MonCallCenter (Rabat) ↗</a>
+                <a href="https://www.moncallcenter.ma/q-offres/?Ville=Sal%C3%A9" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🎧 MonCallCenter (Salé) ↗</a>
+                <a href="https://www.moncallcenter.ma/q-offres/?Motcle=back+office" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">📄 Back-Office Maroc ↗</a>
+                <a href="https://jobs.foundever.com/morocco" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏢 Foundever (Rabat &amp; Salé) ↗</a>
+                <a href="https://jobs.concentrix.com/" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏢 Concentrix (Technopolis) ↗</a>
+                <a href="https://www.recrutement-axa.ma/" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🛡️ AXA Services Maroc (Rabat) ↗</a>
+                <a href="https://www.rekrute.com/offres-emploi-maroc.html?keyword=back+office+rabat" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🔴 Rekrute Back-Office ↗</a>
+                <a href="https://www.marocannonces.com/maroc/offres-emploi-centres-d-appels-tele-services-rabat-b313-m7.html" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🇲🇦 Marocannonces Centres d'Appels ↗</a>
+            </div>
+        </div>
+
+        <!-- Tech Quick Launchers -->
+        <div id="techLaunchers" class="card" style="margin-bottom: 14px; padding: 14px 18px; display: none;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>🌐 Direct Moroccan Tech Hubs &amp; One-Click Portals</span>
+                <span style="font-size: 11px; font-weight: 400; color: #64748b;">(Click to open pre-filtered search)</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <a href="https://www.linkedin.com/jobs/search/?keywords=React%20OR%20Python%20OR%20Data%20OR%20Support&location=Rabat-Sal%C3%A9-K%C3%A9nitra%2C%20Morocco" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">💼 LinkedIn (Rabat/Salé) ↗</a>
+                <a href="https://www.rekrute.com/offres-emploi-metiers-de-l-it.html" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🔴 Rekrute IT Maroc ↗</a>
+                <a href="https://www.capgemini.com/ma-fr/carrieres/" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏢 Capgemini (Technopolis) ↗</a>
+                <a href="https://altenrecrute.ma/" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏢 Alten Maroc (Rabat) ↗</a>
+                <a href="https://dxc.com/ma/fr/careers" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏢 DXC Technology (Technopolis) ↗</a>
+                <a href="https://www.marocannonces.com/maroc/offres-emploi-informatique-multimedia-rabat-b309-m7.html" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🇲🇦 Marocannonces (Rabat IT) ↗</a>
+                <a href="https://www.emploi-public.ma/" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 11.5px; padding: 6px 11px;">🏛️ Emploi-Public (Concours IT) ↗</a>
+            </div>
+        </div>
+
+        <!-- Filter, Search & Sort Toolbar Bar -->
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <!-- Filter Chips -->
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Filtres rapides :</span>
+                    <button class="mode-btn active" id="chipAll" onclick="applySubFilter('all')" style="padding: 5px 12px; font-size: 12px;">Tous (<span id="countAll">0</span>)</button>
+                    <button class="mode-btn" id="chipBPO" onclick="applySubFilter('bpo')" style="padding: 5px 12px; font-size: 12px;">🎧 Centres d'Appels &amp; BPO (<span id="countBPO">0</span>)</button>
+                    <button class="mode-btn" id="chipTech" onclick="applySubFilter('tech')" style="padding: 5px 12px; font-size: 12px;">💻 Tech &amp; IT (<span id="countTech">0</span>)</button>
+                    <button class="mode-btn" id="chipRabat" onclick="applySubFilter('rabat')" style="padding: 5px 12px; font-size: 12px;">📍 Rabat &amp; Salé</button>
+                    <button class="mode-btn" id="chipRemote" onclick="applySubFilter('remote')" style="padding: 5px 12px; font-size: 12px;">🏠 Télétravail Maroc</button>
+                </div>
+
+                <!-- Stats summary -->
+                <div id="hunterCountSummary" style="font-size: 12px; color: #94a3b8; font-weight: 500;">
+                    <span id="hunterVisibleCount" style="color: #60a5fa; font-weight: 700;">0</span> offres affichées
+                </div>
+            </div>
+
+            <!-- Search & Sort Row -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+                <!-- Live Search Box -->
+                <div style="flex: 1; min-width: 240px; position: relative;">
+                    <input type="text" id="hunterSearchInput" oninput="onHunterSearchChange()" placeholder="🔍 Chercher par mot-clé, entreprise ou compétence (ex: FedEx, React, Client, Salé)..." style="padding: 7px 12px; font-size: 12.5px; height: 34px; background: #090f1d; border-radius: 8px;">
+                </div>
+
+                <!-- Sort Control -->
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; white-space: nowrap;">📊 Trier par :</span>
+                    <select id="hunterSortSelect" onchange="onHunterSortChange()" style="width: auto; padding: 7px 12px; font-size: 12.5px; height: 34px; background: #090f1d; border-radius: 8px; color: #fff; border: 1px solid var(--border);">
+                        <option value="ats_desc">🎯 Score ATS (Décroissant : 95% → 55%)</option>
+                        <option value="ats_asc">🎯 Score ATS (Croissant : 55% → 95%)</option>
+                        <option value="company_asc">🏢 Entreprise (A → Z)</option>
+                        <option value="company_desc">🏢 Entreprise (Z → A)</option>
+                        <option value="title_asc">💼 Intitulé de poste (A → Z)</option>
+                        <option value="title_desc">💼 Intitulé de poste (Z → A)</option>
+                        <option value="location_asc">📍 Localisation (A → Z)</option>
+                        <option value="source_asc">🌐 Plateforme Source</option>
+                    </select>
+
+                    <!-- Quick Sort Buttons -->
+                    <div style="display: flex; gap: 4px;">
+                        <button id="quickSortAts" class="mode-btn active" onclick="setHunterQuickSort('ats')" title="Trier par Score ATS" style="padding: 6px 10px; font-size: 11.5px; height: 34px;">🎯 ATS ▼</button>
+                        <button id="quickSortCompany" class="mode-btn" onclick="setHunterQuickSort('company')" title="Trier par Entreprise" style="padding: 6px 10px; font-size: 11.5px; height: 34px;">🏢 Entreprise</button>
+                        <button id="quickSortTitle" class="mode-btn" onclick="setHunterQuickSort('title')" title="Trier par Intitulé" style="padding: 6px 10px; font-size: 11.5px; height: 34px;">💼 Intitulé</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="job-list" id="jobFeed">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- VIEW 2: Moroccan Recruitment Directory (All Platforms) -->
+    <div id="view-directory" class="view-section">
+        <div class="card" style="margin-bottom: 20px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #fff;">🇲🇦 The Complete Moroccan Tech Recruitment Directory</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                Every viable job portal, multinational ESN in Rabat Technopolis, automotive giant in Kénitra AFZ, and state digital agency.
+                Click any portal to find active openings, then copy & paste the offer into <strong>Custom Job Tailor</strong> to get your custom 1-page CV & cover letter instantly!
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px;">
+            <!-- Category 1: General & Tech Job Boards -->
+            <div class="card">
+                <div class="card-title" style="color: #60a5fa;">
+                    <span>📌 1. Job Boards & Aggregators</span>
+                    <span class="tag tag-track">Portals</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.linkedin.com/jobs/search/?keywords=React%20OR%20Python%20OR%20Data%20OR%20Support&location=Rabat-Sal%C3%A9-K%C3%A9nitra%2C%20Morocco" target="_blank" style="color: #60a5fa; text-decoration: none;">💼 LinkedIn Jobs (Rabat-Salé-Kénitra) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The #1 platform for tech leads & ESN recruiters in Rabat. Pre-filtered with your exact stack!</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.rekrute.com/offres-emploi-metiers-de-l-it.html" target="_blank" style="color: #60a5fa; text-decoration: none;">🔴 Rekrute.com (Maroc IT) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The leading corporate IT & executive recruitment board in Morocco (Alten, Sofrecom, Capgemini).</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.marocannonces.com/maroc/offres-emploi-informatique-multimedia-rabat-b309-m7.html" target="_blank" style="color: #60a5fa; text-decoration: none;">🇲🇦 Marocannonces (Rabat & Kénitra) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">High volume of local IT service providers, SMEs, and tech support centers in Rabat & Salé.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://ma.indeed.com/emplois?q=informatique&l=Rabat" target="_blank" style="color: #60a5fa; text-decoration: none;">🔍 Indeed Maroc (Rabat / Kénitra) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Global aggregator indexing direct postings across Morocco.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.optioncarriere.ma/emploi-rabat.html?s=informatique" target="_blank" style="color: #60a5fa; text-decoration: none;">🌐 Optioncarriere.ma ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Aggregates listings from Moroccan company career sites and smaller agencies.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.emploi.ma/recherche-jobs-maroc/rabat" target="_blank" style="color: #60a5fa; text-decoration: none;">📄 Emploi.ma & M-Job.ma ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">General and mid-level employment boards with dedicated IT sections.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.novojob.com/maroc" target="_blank" style="color: #60a5fa; text-decoration: none;">🎯 Novojob & Bayt.com Maroc ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Specialized in young graduates, engineering talent, and regional MENA tech roles.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 2: Rabat Technopolis & Salé Tech Giants -->
+            <div class="card">
+                <div class="card-title" style="color: #34d399;">
+                    <span>🏢 2. Rabat Technopolis & Salé Giants</span>
+                    <span class="tag tag-matched">Direct Portals</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.capgemini.com/ma-fr/carrieres/" target="_blank" style="color: #34d399; text-decoration: none;">Capgemini Engineering Maroc (Technopolis) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The largest tech employer in Rabat Technopolis. Continuous recruitment in React, Java, Python, and Cloud.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://dxc.com/ma/fr/careers" target="_blank" style="color: #34d399; text-decoration: none;">DXC Technology Morocco (Technopolis) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Major IT services & support provider. High demand for Application Support, Cloud, and Data analysts.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://altenrecrute.ma/" target="_blank" style="color: #34d399; text-decoration: none;">Alten Delivery Center Maroc (Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Engineering & digital solutions. Big focus on Big Data, Python, Software QA, and Clinical Data reporting.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.sofrecom.com/carrieres" target="_blank" style="color: #34d399; text-decoration: none;">Sofrecom Maroc (Orange Group - Technopolis) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Orange's consulting & engineering arm in Rabat. Web architectures, Big Data, Telecom systems.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.inetum.com/fr/carrieres" target="_blank" style="color: #34d399; text-decoration: none;">Inetum Maroc & CGI Maroc ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">European digital transformation leaders with large hubs in Rabat & Casablanca.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.thalesgroup.com/fr/carrieres" target="_blank" style="color: #34d399; text-decoration: none;">Thales Morocco & SQLI Maroc (Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Cybersecurity, critical software systems, e-commerce, and modern JavaScript/React web apps.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.moncallcenter.ma/offres-emploi-rabat.html" target="_blank" style="color: #34d399; text-decoration: none;">MonCallCenter (Tech Support L1/L2 in Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Concentrix, Webhelp, Foundever, Majorel for dedicated Technical Application Support & Incident Management.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 3: Kénitra Atlantic Free Zone -->
+            <div class="card">
+                <div class="card-title" style="color: #fbbf24;">
+                    <span>🚗 3. Kénitra Atlantic Free Zone (AFZ)</span>
+                    <span class="tag tag-missing">Automotive Tech</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.stellantis.com/fr/carrieres" target="_blank" style="color: #fbbf24; text-decoration: none;">Stellantis Kénitra (Peugeot / Citroën / Fiat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The largest industrial tech plant in Kénitra. Embedded software, industrial data pipelines, IoT, and systems.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.lear.com/careers" target="_blank" style="color: #fbbf24; text-decoration: none;">Lear Corporation (Kénitra AFZ) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Automotive electronics, electrical distribution, and industrial data engineering.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.yazaki-europe.com/careers" target="_blank" style="color: #fbbf24; text-decoration: none;">Yazaki Morocco (Kénitra) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Industrial cabling and manufacturing execution systems (MES / Data / IT Support).</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.aptiv.com/careers" target="_blank" style="color: #fbbf24; text-decoration: none;">Aptiv & Fujikura Automotive (Kénitra) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Smart mobility architectures, connected vehicle software, and supply-chain data systems.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 4: State, Semi-Public & Digital Agencies -->
+            <div class="card">
+                <div class="card-title" style="color: #a78bfa;">
+                    <span>🏛️ 4. State & Public Digital Sector (Rabat)</span>
+                    <span class="tag" style="background: rgba(167, 139, 250, 0.15); color: #c4b5fd;">Capital Hub</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.add.gov.ma/" target="_blank" style="color: #a78bfa; text-decoration: none;">ADD (Agence de Développement du Digital - Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Headquarters in Rabat. Leading national projects in AI, Open Data, and state digital platforms.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.emploi-public.ma/" target="_blank" style="color: #a78bfa; text-decoration: none;">Emploi-Public.ma (Concours IT & Ingénieurs) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The official civil service & state-owned enterprise (EEP) recruitment portal for Rabat ministries and agencies.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.alwadifa-maroc.com/" target="_blank" style="color: #a78bfa; text-decoration: none;">Alwadifa-Maroc.com ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">The #1 announcements hub for all public, semi-public, and regional recruitment competitions across Morocco.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.bkam.ma/A-propos/Ressources-humaines/Recrutement" target="_blank" style="color: #a78bfa; text-decoration: none;">Bank Al-Maghrib (Rabat) & CDG ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Morocco's central bank and sovereign investment fund located in Rabat. Top tier IT and data infrastructure.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.uir.ac.ma/fr/page/recrutement" target="_blank" style="color: #a78bfa; text-decoration: none;">UIR (Université Internationale de Rabat - Technopolis) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Major campus & international university in Salé Technopolis hiring IT engineers, developers, and data managers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 5: Call Centers & Back-Office Majors (Rabat, Salé Technopolis & Télétravail) -->
+            <div class="card">
+                <div class="card-title" style="color: #ec4899;">
+                    <span>🎧 5. Centres d'Appels &amp; Back-Office Majors (Rabat, Salé &amp; Remote)</span>
+                    <span class="tag" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">BPO Hub</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.moncallcenter.ma/q-offres/?Ville=Rabat" target="_blank" style="color: #f472b6; text-decoration: none;">MonCallCenter.ma (Rabat, Salé &amp; Télétravail) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Le portail n°1 spécialisé centres d'appels et relation client au Maroc avec actualisation quotidienne.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://jobs.foundever.com/morocco" target="_blank" style="color: #f472b6; text-decoration: none;">Foundever Morocco (Rabat Agdal &amp; Technopolis) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Votre employeur actuel (CDI projet FedEx) — Projets premium BPO, service client international et support back-office.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://jobs.concentrix.com/" target="_blank" style="color: #f472b6; text-decoration: none;">Concentrix (Salé Technopolis &amp; Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Leader mondial BPO à Rabat et Technopolis avec forte demande en service client, back-office et gestion sinistres.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.recrutement-axa.ma/" target="_blank" style="color: #f472b6; text-decoration: none;">AXA Services Maroc (Rabat Agdal &amp; Hassan) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Centre d'expertise international en assurance, gestion de sinistres, back-office et télé-services.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.rekrute.com/offres-emploi-maroc.html?keyword=back+office+rabat" target="_blank" style="color: #f472b6; text-decoration: none;">Rekrute Back-Office &amp; Téléconseillers (Rabat) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Postes BPO, gestionnaires d'assurances, superviseurs et chargés de clientèle avec CDI.</p>
+                    </div>
+                    <div style="padding: 10px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border);">
+                        <strong><a href="https://www.marocannonces.com/maroc/offres-emploi-centres-d-appels-tele-services-rabat-b313-m7.html" target="_blank" style="color: #f472b6; text-decoration: none;">Marocannonces Télé-services (Rabat &amp; Salé) ↗</a></strong>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Annonces locales directes pour centres d'appels à Rabat Agdal, Hassan, Salé Tabriquet et Technopolis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: Custom Single Job Tailor -->
+    <div id="view-tailor" class="view-section">
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">
+                    <span>📋 Paste Any Job Offer</span>
+                    <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="loadSample()">Load Sample</button>
+                </div>
+                <div class="input-group">
+                    <label>Company Name (Optional)</label>
+                    <input type="text" id="companyInput" placeholder="e.g. Capgemini, Inetum, DXC">
+                </div>
+                <div class="input-group">
+                    <label>Job Title (Optional)</label>
+                    <input type="text" id="roleInput" placeholder="e.g. Développeur Full-Stack, Data Scientist">
+                </div>
+                <div class="input-group">
+                    <label>Target Language</label>
+                    <select id="langSelect">
+                        <option value="auto">⚡ Auto-Detect Language</option>
+                        <option value="fr">🇫🇷 French (Français)</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Job Description *</label>
+                    <textarea id="jobDescInput" placeholder="Paste the full job description or requirements here..."></textarea>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-primary" id="btnTailor" onclick="tailorApplication()">🚀 Analyze & Tailor 1-Page CV</button>
+                </div>
+            </div>
+
+            <div class="card" id="outputCard">
+                <div id="emptyView" style="text-align: center; padding: 70px 20px; color: var(--text-muted);">
+                    <h3>Ready to Tailor</h3>
+                    <p style="font-size: 12.5px; margin-top: 6px;">Paste a job description on the left to generate your custom 1-page application.</p>
+                </div>
+
+                <div id="resultsView" style="display: none;">
+                    <div class="metrics-bar">
+                        <div class="metric-card">
+                            <div class="val" id="atsScoreVal">--%</div>
+                            <div class="lbl">ATS Match Score</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="val" id="trackVal" style="font-size: 14px; color: #60a5fa; padding-top: 6px;">--</div>
+                            <div class="lbl">Domain</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="val" id="langVal" style="font-size: 14px; color: #a78bfa; padding-top: 6px;">--</div>
+                            <div class="lbl">Language</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label>✅ Matched Skills</label>
+                        <div class="tag-group" id="matchedTags"></div>
+                    </div>
+
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab('cvPreview')">📄 1-Page CV (A4 PDF)</div>
+                        <div class="tab" onclick="switchTab('cvMarkdown')">📝 Markdown</div>
+                        <div class="tab" onclick="switchTab('coverLetter')">✉️ Cover Letter</div>
+                        <div class="tab" onclick="switchTab('recruiterDm')">💬 Recruiter DM</div>
+                    </div>
+
+                    <div id="tab-cvPreview" class="tab-content active">
+                        <iframe id="cvIframe" class="iframe-preview"></iframe>
+                        <div class="action-row">
+                            <button class="btn-primary" onclick="printCv('cvIframe')">🖨️ Print / Save as 1-Page PDF</button>
+                        </div>
+                    </div>
+
+                    <div id="tab-cvMarkdown" class="tab-content">
+                        <div class="output-box" id="markdownOutput"></div>
+                        <div class="action-row"><button class="btn-secondary" onclick="copyText('markdownOutput')">📋 Copy Markdown</button></div>
+                    </div>
+
+                    <div id="tab-coverLetter" class="tab-content">
+                        <div class="output-box" id="coverLetterOutput"></div>
+                        <div class="action-row"><button class="btn-secondary" onclick="copyText('coverLetterOutput')">📋 Copy Cover Letter</button></div>
+                    </div>
+
+                    <div id="tab-recruiterDm" class="tab-content">
+                        <div class="output-box" id="recruiterDmOutput"></div>
+                        <div class="action-row"><button class="btn-secondary" onclick="copyText('recruiterDmOutput')">📋 Copy DM</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 4: Auto-Apply & Report -->
+    <div id="view-apply" class="view-section">
+        <!-- Apply Header -->
+        <div class="hunter-header" style="background: linear-gradient(135deg, #0f2a1d 0%, #1e293b 100%); border-color: rgba(16,185,129,0.3);">
+            <div>
+                <h2 style="font-size: 16px; font-weight: 600; color: #34d399;">📬 Auto-Apply Bot — Abderrahmane El Idrissi Slimani</h2>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;" id="applyStatusText">
+                    Multi-Platform Bot: Packages &amp; verifies applications across LinkedIn Morocco, Rekrute, Marocannonces, Emploi-Public (Rabat), Alwadifa, Remotive &amp; WeWorkRemotely (ATS ≥ 70%). Direct email dispatch + instant apply portal links.
+                </p>
+            </div>
+            <div class="hunter-controls" style="gap: 8px; flex-wrap: wrap; align-items: center;">
+                <select id="applyTargetMode" style="padding: 9px 12px; font-size: 13px; background: #090f1d; border-radius: 8px; border: 1px solid var(--border); color: #fff;">
+                    <option value="bpo">🎧 Cible : Centres d'Appels &amp; Back-Office (Rabat/Salé/Remote)</option>
+                    <option value="tech">💻 Cible : Rôles Tech &amp; IT</option>
+                    <option value="all">🌐 Cible : Tous les Postes (Global)</option>
+                </select>
+                <button class="btn-success" id="btnLiveApply" onclick="runAutoApply(true)" style="font-size: 13.5px; padding: 10px 18px; background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                    ⚡ Scan Live &amp; Auto-Apply
+                </button>
+                <button class="btn-secondary" id="btnRunApply" onclick="runAutoApply(false)" style="font-size: 13px; padding: 10px 16px;">
+                    🚀 Postuler aux Offres Sauvegardées
+                </button>
+                <a href="/api/apply/report/csv" class="btn-secondary" style="text-decoration: none; padding: 10px 14px; font-size: 13px;" download>
+                    ⬇️ CSV
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="metrics-bar" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 18px;" id="applyStatsBar">
+            <div class="metric-card"><div class="val" id="statTotal">—</div><div class="lbl">Total Applications</div></div>
+            <div class="metric-card"><div class="val" id="statNew" style="color: #60a5fa;">—</div><div class="lbl">New Today</div></div>
+            <div class="metric-card"><div class="val" id="statFollowup" style="color: #fbbf24;">—</div><div class="lbl">Follow-Ups Due</div></div>
+            <div class="metric-card"><div class="val" id="statSent" style="color: #34d399;">—</div><div class="lbl">Emails Sent</div></div>
+        </div>
+
+        <!-- Email Setup Notice -->
+        <div id="emailSetupNotice" class="card" style="margin-bottom: 16px; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05); display: none;">
+            <div style="font-size: 13px; color: #fbbf24; font-weight: 600; margin-bottom: 6px;">⚠️ Optional: Enable Direct Email Sending</div>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+                To send application emails directly from the bot, set these environment variables before starting the server:<br>
+                <code style="background: #090f1d; padding: 2px 6px; border-radius: 4px; font-size: 11px;">set GMAIL_SENDER=elidrissislimaniabderrahmane@gmail.com</code><br>
+                <code style="background: #090f1d; padding: 2px 6px; border-radius: 4px; font-size: 11px;">set GMAIL_APP_PASSWORD=your_gmail_app_password_here</code><br>
+                <span style="font-size: 11px;">Get an App Password at: <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: #60a5fa;">myaccount.google.com/apppasswords</a></span>
+            </p>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 14px; font-weight: 600;">📋 Applications Log</span>
+                    <span style="font-size: 12px; color: var(--text-muted);">(<span id="applyCountDisplay" style="color: #34d399; font-weight: 700;">0</span> affichées)</span>
+                </div>
+                
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <!-- Search input in apply table -->
+                    <input type="text" id="applySearchInput" oninput="filterAndRenderApplications()" placeholder="🔍 Chercher poste, entreprise, email..." style="width: 210px; padding: 6px 10px; font-size: 12px; height: 32px; background: #090f1d; border-radius: 6px;">
+
+                    <!-- Sort select for apply log -->
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; white-space: nowrap;">📊 Trier :</span>
+                        <select id="applySortSelect" onchange="onApplySortChange()" style="width: auto; padding: 6px 10px; font-size: 12px; height: 32px; background: #090f1d; border-radius: 6px; color: #fff;">
+                            <option value="date_desc">📅 Date appliquée (Plus récente)</option>
+                            <option value="date_asc">📅 Date appliquée (Plus ancienne)</option>
+                            <option value="ats_desc">🎯 Score ATS (Plus élevé : 95% → 55%)</option>
+                            <option value="ats_asc">🎯 Score ATS (Plus faible : 55% → 95%)</option>
+                            <option value="company_asc">🏢 Entreprise (A → Z)</option>
+                            <option value="company_desc">🏢 Entreprise (Z → A)</option>
+                            <option value="title_asc">💼 Intitulé de poste (A → Z)</option>
+                            <option value="followup_asc">⏰ Relance la plus proche</option>
+                            <option value="status_asc">📌 Statut (A → Z)</option>
+                        </select>
+                    </div>
+
+                    <!-- Status filter -->
+                    <select id="filterStatus" onchange="filterAndRenderApplications()" style="width: auto; padding: 6px 10px; font-size: 12px; height: 32px; background: #090f1d; border-radius: 6px;">
+                        <option value="all">Tous les Statuts</option>
+                        <option value="Packaged">📦 Packaged &amp; Ready</option>
+                        <option value="Email">📧 Email Sent</option>
+                        <option value="Interview">🗓️ Interview</option>
+                        <option value="Rejected">❌ Rejected</option>
+                        <option value="LinkedIn">💼 LinkedIn</option>
+                        <option value="MonCallCenter">🎧 MonCallCenter</option>
+                        <option value="Rekrute">🔴 Rekrute</option>
+                    </select>
+
+                    <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px; height: 32px;" onclick="loadApplyReport()">🔄 Refresh</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="applyTable" style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                    <thead>
+                        <tr style="background: #090f1d; color: var(--text-muted); text-transform: uppercase; font-size: 11px; user-select: none;">
+                            <th onclick="toggleApplySort('date')" style="cursor: pointer; padding: 10px 14px; text-align: left; white-space: nowrap;" title="Cliquer pour trier par Date">
+                                Date Applied <span id="sortIconDate" style="color: #60a5fa;">▼</span>
+                            </th>
+                            <th onclick="toggleApplySort('title')" style="cursor: pointer; padding: 10px 14px; text-align: left;" title="Cliquer pour trier par Intitulé">
+                                Job Title <span id="sortIconTitle">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('company')" style="cursor: pointer; padding: 10px 14px; text-align: left;" title="Cliquer pour trier par Entreprise">
+                                Company <span id="sortIconCompany">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('location')" style="cursor: pointer; padding: 10px 14px; text-align: left;" title="Cliquer pour trier par Localisation">
+                                Location <span id="sortIconLocation">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('ats')" style="cursor: pointer; padding: 10px 14px; text-align: center;" title="Cliquer pour trier par ATS Match">
+                                ATS% <span id="sortIconAts">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('method')" style="cursor: pointer; padding: 10px 14px; text-align: left;" title="Cliquer pour trier par Canal">
+                                Channel <span id="sortIconMethod">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('followup')" style="cursor: pointer; padding: 10px 14px; text-align: center;" title="Cliquer pour trier par Relance">
+                                Follow-Up <span id="sortIconFollowup">⇅</span>
+                            </th>
+                            <th onclick="toggleApplySort('status')" style="cursor: pointer; padding: 10px 14px; text-align: center;" title="Cliquer pour trier par Statut">
+                                Status <span id="sortIconStatus">⇅</span>
+                            </th>
+                            <th style="padding: 10px 14px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applyTableBody">
+                        <tr>
+                            <td colspan="9" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                                Click <strong>"🚀 Apply to All Matched Jobs"</strong> to start, or <strong>"🔄 Refresh"</strong> to load existing applications.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Update Status Modal -->
+<div class="modal-backdrop" id="statusModal" onclick="if(event.target.id==='statusModal') closeStatusModal()" style="z-index: 1000;">
+    <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-header">
+            <h3 style="font-size: 15px;">✏️ Update Application Status</h3>
+            <button class="btn-secondary" onclick="closeStatusModal()" style="padding: 5px 10px;">✕</button>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="hidden" id="statusJobId">
+            <div class="input-group">
+                <label>New Status</label>
+                <select id="statusSelect">
+                    <option value="Packaged &amp; Logged">📦 Packaged &amp; Logged</option>
+                    <option value="Ready to Send (Email Drafted)">✉️ Ready to Send (Email Drafted)</option>
+                    <option value="Email Sent">✅ Email Sent</option>
+                    <option value="Interview Scheduled">🗓️ Interview Scheduled</option>
+                    <option value="Offer Received">🎉 Offer Received</option>
+                    <option value="Rejected">❌ Rejected</option>
+                    <option value="No Response">🔕 No Response</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Notes (Optional)</label>
+                <textarea id="statusNotes" style="height: 80px;" placeholder="e.g. Recruiter replied, interview on Monday 14h..."></textarea>
+            </div>
+            <div class="btn-row">
+                <button class="btn-primary" onclick="submitStatusUpdate()">💾 Save Status</button>
+                <button class="btn-secondary" onclick="closeStatusModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Application Modal for Job Hunter -->
+<div class="modal-backdrop" id="appModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h3 id="modalJobTitle" style="font-size: 16px;">Job Title</h3>
+                <p id="modalCompanyMeta" style="font-size: 12px; color: var(--text-muted);"></p>
+            </div>
+            <button class="btn-secondary" onclick="closeModal()" style="padding: 5px 10px;">✕ Close</button>
+        </div>
+        <div class="modal-body">
+            <div class="tabs">
+                <div class="tab active" onclick="switchModalTab('mCvPreview')">📄 1-Page CV (Print PDF)</div>
+                <div class="tab" onclick="switchModalTab('mCoverLetter')">✉️ Cover Letter</div>
+                <div class="tab" onclick="switchModalTab('mRecruiterDm')">💬 Recruiter DM</div>
+            </div>
+            <div id="mtab-mCvPreview" class="tab-content active">
+                <iframe id="modalIframe" class="iframe-preview"></iframe>
+                <div class="action-row">
+                    <button class="btn-primary" onclick="downloadCurrentJobPdf()" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">📥 Télécharger CV 1 Page (PDF Vectoriel A4)</button>
+                    <button class="btn-secondary" onclick="printCv('modalIframe')">🖨️ Imprimer</button>
+                </div>
+            </div>
+            <div id="mtab-mCoverLetter" class="tab-content">
+                <div class="output-box" id="modalCoverLetter"></div>
+                <div class="action-row"><button class="btn-secondary" onclick="copyText('modalCoverLetter')">📋 Copy Cover Letter</button></div>
+            </div>
+            <div id="mtab-mRecruiterDm" class="tab-content">
+                <div class="output-box" id="modalRecruiterDm"></div>
+                <div class="action-row"><button class="btn-secondary" onclick="copyText('modalRecruiterDm')">📋 Copy DM</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allApplications = [];
+let cachedHuntedJobs = [];
+
+function switchMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+
+    const modeMap = { hunter: 1, directory: 2, tailor: 3, apply: 4 };
+    const idx = modeMap[mode] || 1;
+    document.querySelector(`.mode-btn:nth-child(${idx})`).classList.add('active');
+    document.getElementById('view-' + mode).classList.add('active');
+
+    if (mode === 'hunter') loadHuntedJobs();
+    if (mode === 'apply') loadApplyReport();
+}
+
+// ── Auto-Apply JS ─────────────────────────────────────────────────────────────
+
+async function runAutoApply(scanLive = false) {
+    const btnLive = document.getElementById('btnLiveApply');
+    const btnSaved = document.getElementById('btnRunApply');
+    const statusText = document.getElementById('applyStatusText');
+    const modeSelect = document.getElementById('applyTargetMode');
+    const targetMode = modeSelect ? modeSelect.value : 'bpo';
+
+    if (btnLive) btnLive.disabled = true;
+    if (btnSaved) btnSaved.disabled = true;
+
+    if (scanLive) {
+        if (btnLive) btnLive.innerText = '⏳ Scan Live & Postulation...';
+        statusText.innerText = `⚡ Étape 1/2 : Scan live (${targetMode.toUpperCase()}) en cours pour Rabat, Salé et Télétravail Maroc...`;
+    } else {
+        if (btnSaved) btnSaved.innerText = '⏳ Traitement des offres...';
+        statusText.innerText = `Génération des packs de candidature et CVs PDF 1 page pour les offres ciblées (${targetMode.toUpperCase()})...`;
+    }
+
+    try {
+        const res = await fetch('/api/apply/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ min_score: 65, scan_first: scanLive, mode: targetMode })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        allApplications = data.all_applications || [];
+        filterAndRenderApplications();
+        updateApplyStats(allApplications);
+
+        statusText.innerText = `✅ Opération réussie ! ${data.new_count} nouvelle(s) candidature(s) préparée(s) avec CV 1 page PDF. (${data.total_count} au total dans le journal)`;
+    } catch (e) {
+        statusText.innerText = '❌ Erreur: ' + e.message;
+        alert('Erreur Auto-Apply: ' + e.message);
+    } finally {
+        if (btnLive) {
+            btnLive.disabled = false;
+            btnLive.innerText = '⚡ Scan Live & Auto-Apply';
+        }
+        if (btnSaved) {
+            btnSaved.disabled = false;
+            btnSaved.innerText = '🚀 Postuler aux Offres Sauvegardées';
+        }
+    }
+}
+
+let currentApplySortField = 'date';
+let currentApplySortDir = 'desc';
+
+async function loadApplyReport() {
+    try {
+        const res = await fetch('/api/apply/log');
+        const data = await res.json();
+        allApplications = data.applications || [];
+        filterAndRenderApplications();
+        updateApplyStats(allApplications);
+    } catch (e) {
+        console.error('Failed to load report:', e);
+    }
+}
+
+function updateApplyStats(apps) {
+    const today = new Date().toISOString().slice(0, 10);
+    const todayApps = apps.filter(a => (a.applied_at || '').startsWith(today));
+    const followups = apps.filter(a => a.followup_date <= today && !['Rejected', 'Offer Received'].includes(a.status));
+    const emailSent = apps.filter(a => (a.status || '').includes('Email Sent') || (a.status || '').includes('Interview'));
+
+    document.getElementById('statTotal').innerText = apps.length;
+    document.getElementById('statNew').innerText = todayApps.length;
+    document.getElementById('statFollowup').innerText = followups.length;
+    document.getElementById('statSent').innerText = emailSent.length;
+}
+
+function onApplySortChange() {
+    const val = document.getElementById('applySortSelect').value;
+    const parts = val.split('_');
+    currentApplySortDir = parts.pop();
+    currentApplySortField = parts.join('_');
+    filterAndRenderApplications();
+}
+
+function toggleApplySort(field) {
+    if (currentApplySortField === field) {
+        currentApplySortDir = currentApplySortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentApplySortField = field;
+        currentApplySortDir = (field === 'date' || field === 'ats') ? 'desc' : 'asc';
+    }
+
+    const sel = document.getElementById('applySortSelect');
+    if (sel) {
+        const targetVal = `${field}_${currentApplySortDir}`;
+        for (let opt of sel.options) {
+            if (opt.value === targetVal) { sel.value = targetVal; break; }
+        }
+    }
+    filterAndRenderApplications();
+}
+
+function updateApplySortHeaderIcons() {
+    const fields = ['date', 'title', 'company', 'location', 'ats', 'method', 'followup', 'status'];
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    fields.forEach(f => {
+        const icon = document.getElementById('sortIcon' + cap(f));
+        if (!icon) return;
+        if (currentApplySortField === f) {
+            icon.innerText = currentApplySortDir === 'asc' ? '▲' : '▼';
+            icon.style.color = '#60a5fa';
+        } else {
+            icon.innerText = '⇅';
+            icon.style.color = 'var(--text-muted)';
+        }
+    });
+}
+
+function filterAndRenderApplications() {
+    const statusFilter = (document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'all').toLowerCase();
+    const query = (document.getElementById('applySearchInput') ? document.getElementById('applySearchInput').value : '').trim().toLowerCase();
+
+    let list = [...allApplications];
+
+    if (statusFilter !== 'all') {
+        list = list.filter(a => (a.status || '').toLowerCase().includes(statusFilter) || (a.method || '').toLowerCase().includes(statusFilter));
+    }
+
+    if (query) {
+        list = list.filter(a =>
+            (a.title || '').toLowerCase().includes(query) ||
+            (a.company || '').toLowerCase().includes(query) ||
+            (a.location || '').toLowerCase().includes(query) ||
+            (a.method || '').toLowerCase().includes(query) ||
+            (a.notes || '').toLowerCase().includes(query) ||
+            (a.contact_email || '').toLowerCase().includes(query)
+        );
+    }
+
+    list.sort((a, b) => {
+        let res = 0;
+        if (currentApplySortField === 'date') {
+            res = (a.applied_at || '').localeCompare(b.applied_at || '');
+        } else if (currentApplySortField === 'ats') {
+            res = (a.ats_score || 0) - (b.ats_score || 0);
+        } else if (currentApplySortField === 'company') {
+            res = (a.company || '').localeCompare(b.company || '', 'fr', {sensitivity: 'base'});
+        } else if (currentApplySortField === 'title') {
+            res = (a.title || '').localeCompare(b.title || '', 'fr', {sensitivity: 'base'});
+        } else if (currentApplySortField === 'location') {
+            res = (a.location || '').localeCompare(b.location || '', 'fr', {sensitivity: 'base'});
+        } else if (currentApplySortField === 'method') {
+            res = (a.method || '').localeCompare(b.method || '', 'fr', {sensitivity: 'base'});
+        } else if (currentApplySortField === 'followup') {
+            res = (a.followup_date || '9999').localeCompare(b.followup_date || '9999');
+        } else if (currentApplySortField === 'status') {
+            res = (a.status || '').localeCompare(b.status || '', 'fr', {sensitivity: 'base'});
+        }
+        return currentApplySortDir === 'desc' ? -res : res;
+    });
+
+    const displayCount = document.getElementById('applyCountDisplay');
+    if (displayCount) displayCount.innerText = list.length;
+
+    updateApplySortHeaderIcons();
+    renderApplyTable(list);
+}
+
+function renderApplyTable(apps) {
+    const tbody = document.getElementById('applyTableBody');
+    if (!apps || apps.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="padding: 40px; text-align: center; color: var(--text-muted);">
+            No applications yet. Click <strong>"🚀 Apply to All Matched Jobs"</strong> to start.</td></tr>`;
+        return;
+    }
+
+    const statusColors = {
+        'Packaged': '#60a5fa',
+        'Email Sent': '#34d399',
+        'Interview': '#a78bfa',
+        'Offer': '#fbbf24',
+        'Rejected': '#f87171',
+        'No Response': '#94a3b8'
+    };
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    tbody.innerHTML = apps.map((a, i) => {
+        const statusColor = Object.entries(statusColors).find(([k]) => (a.status || '').includes(k));
+        const color = statusColor ? statusColor[1] : '#94a3b8';
+        const followupOverdue = a.followup_date && a.followup_date <= today && !['Rejected', 'Offer Received'].includes(a.status);
+        const followupStyle = followupOverdue ? 'color: #fbbf24; font-weight: 700;' : 'color: var(--text-muted);';
+        const atsColor = a.ats_score >= 85 ? '#34d399' : a.ats_score >= 70 ? '#fbbf24' : '#f87171';
+
+        return `
+        <tr style="border-bottom: 1px solid var(--border); transition: background 0.15s;" onmouseover="this.style.background='#1a2540'" onmouseout="this.style.background=''">
+            <td style="padding: 10px 14px; color: var(--text-muted); white-space: nowrap; font-size: 12px;">${escapeHtml(a.applied_at)}</td>
+            <td style="padding: 10px 14px; font-weight: 600;">
+                <a href="${escapeHtml(a.url)}" target="_blank" style="color: #93c5fd; text-decoration: none;" title="Open job posting">
+                    ${escapeHtml(a.title)} ↗
+                </a>
+            </td>
+            <td style="padding: 10px 14px;">${escapeHtml(a.company)}</td>
+            <td style="padding: 10px 14px; color: var(--text-muted); font-size: 12px;">${escapeHtml(a.location || '—')}</td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: ${atsColor};">${a.ats_score}%</td>
+            <td style="padding: 10px 14px; font-size: 12px; color: var(--text-muted);">${escapeHtml(a.method)}</td>
+            <td style="padding: 10px 14px; text-align: center; font-size: 12px; ${followupStyle}">${followupOverdue ? '⚠️ ' : ''}${escapeHtml(a.followup_date)}</td>
+            <td style="padding: 10px 14px; text-align: center;">
+                <span style="background: rgba(0,0,0,0.3); border: 1px solid ${color}; color: ${color}; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap;">
+                    ${escapeHtml(a.status)}
+                </span>
+            </td>
+            <td style="padding: 10px 14px; text-align: center;">
+                <div style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; align-items: center;">
+                    <a href="${escapeHtml(a.apply_url || a.url)}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 4px 10px; font-size: 11px;">🌐 Open & Apply ↗</a>
+                    <a href="/api/apply/pdf/${escapeHtml(a.job_id)}" target="_blank" class="btn-secondary" style="text-decoration: none; padding: 4px 8px; font-size: 11px; background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.4);" title="Download 1-Page A4 PDF CV" download>📄 PDF</a>
+                    <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="openStatusModal('${escapeHtml(a.job_id)}', '${escapeHtml(a.status)}')">✏️ Status</button>
+                    ${a.contact_email && !a.email_sent_to ? `<button class="btn-success" style="padding: 4px 8px; font-size: 11px;" onclick="quickSendEmail('${escapeHtml(a.job_id)}', '${escapeHtml(a.contact_email)}', '${escapeHtml(a.title)}', '${escapeHtml(a.company)}')">📧 Send PDF</button>` : ''}
+                    ${a.email_sent_to ? `<span style="font-size: 10px; color: #34d399;">✅ PDF Sent to ${escapeHtml(a.email_sent_to)}</span>` : ''}
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function openStatusModal(jobId, currentStatus) {
+    document.getElementById('statusJobId').value = jobId;
+    const sel = document.getElementById('statusSelect');
+    for (let opt of sel.options) {
+        if (opt.value === currentStatus) { sel.value = currentStatus; break; }
+    }
+    document.getElementById('statusNotes').value = '';
+    document.getElementById('statusModal').style.display = 'flex';
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+
+async function submitStatusUpdate() {
+    const jobId  = document.getElementById('statusJobId').value;
+    const status = document.getElementById('statusSelect').value;
+    const notes  = document.getElementById('statusNotes').value;
+
+    try {
+        const res = await fetch('/api/apply/update_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_id: jobId, status, notes })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        closeStatusModal();
+        await loadApplyReport();
+    } catch (e) {
+        alert('Failed to update status: ' + e.message);
+    }
+}
+
+async function quickSendEmail(jobId, recipientEmail, jobTitle, company) {
+    if (!confirm(`Send application email to ${recipientEmail} for: ${jobTitle} at ${company}?\n\nMake sure GMAIL_APP_PASSWORD is set in your environment.`)) return;
+
+    const subject = `Candidature — ${jobTitle} chez ${company} | Abderrahmane El Idrissi Slimani`;
+    const body = `Madame, Monsieur,\n\nJe vous contacte suite à votre offre pour le poste de ${jobTitle} chez ${company}.\n\nDiplômé en Big Data (ENSA Kénitra) et Technicien Spécialisé Full-Stack, je dispose d'une expérience solide en développement React/Python, Data Science et support applicatif. Vous trouverez en pièce jointe mon CV personnalisé à votre offre.\n\nJe serais ravi de vous présenter mon profil lors d'un entretien à votre convenance.\n\nBien cordialement,\nAbderrahmane El Idrissi Slimani\n+212 762 609 561 | elidrissislimaniabderrahmane@gmail.com`;
+
+    try {
+        const res = await fetch('/api/apply/send_email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_id: jobId, recipient_email: recipientEmail, subject, body })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        alert(`✅ Email sent successfully to ${recipientEmail}!`);
+        await loadApplyReport();
+    } catch (e) {
+        alert('Email send failed: ' + e.message + '\n\nMake sure GMAIL_APP_PASSWORD is set as an environment variable before starting the server.');
+    }
+}
+
+
+let currentRadarMode = 'bpo';
+let currentSubFilter = 'all';
+let currentHunterSort = 'ats_desc';
+let currentHunterSearch = '';
+let currentModalJobId = null;
+
+function onHunterSortChange() {
+    const sel = document.getElementById('hunterSortSelect');
+    if (sel) currentHunterSort = sel.value;
+    updateHunterQuickSortButtons();
+    filterAndRenderHuntedJobs();
+}
+
+function onHunterSearchChange() {
+    const input = document.getElementById('hunterSearchInput');
+    currentHunterSearch = input ? input.value.trim().toLowerCase() : '';
+    filterAndRenderHuntedJobs();
+}
+
+function setHunterQuickSort(type) {
+    if (type === 'ats') {
+        currentHunterSort = currentHunterSort === 'ats_desc' ? 'ats_asc' : 'ats_desc';
+    } else if (type === 'company') {
+        currentHunterSort = currentHunterSort === 'company_asc' ? 'company_desc' : 'company_asc';
+    } else if (type === 'title') {
+        currentHunterSort = currentHunterSort === 'title_asc' ? 'title_desc' : 'title_asc';
+    }
+
+    const sel = document.getElementById('hunterSortSelect');
+    if (sel) sel.value = currentHunterSort;
+
+    updateHunterQuickSortButtons();
+    filterAndRenderHuntedJobs();
+}
+
+function updateHunterQuickSortButtons() {
+    const bAts = document.getElementById('quickSortAts');
+    const bComp = document.getElementById('quickSortCompany');
+    const bTitle = document.getElementById('quickSortTitle');
+
+    if (bAts) {
+        bAts.classList.toggle('active', currentHunterSort.startsWith('ats'));
+        bAts.innerText = currentHunterSort === 'ats_asc' ? '🎯 ATS ▲' : '🎯 ATS ▼';
+    }
+    if (bComp) {
+        bComp.classList.toggle('active', currentHunterSort.startsWith('company'));
+        bComp.innerText = currentHunterSort === 'company_desc' ? '🏢 Entreprise ▼' : '🏢 Entreprise ▲';
+    }
+    if (bTitle) {
+        bTitle.classList.toggle('active', currentHunterSort.startsWith('title'));
+        bTitle.innerText = currentHunterSort === 'title_desc' ? '💼 Intitulé ▼' : '💼 Intitulé ▲';
+    }
+}
+
+function setRadarFilter(mode) {
+    currentRadarMode = mode;
+    ['radarBtnBPO', 'radarBtnTech', 'radarBtnAll'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) {
+            b.classList.remove('active');
+            b.style.background = '#1e293b';
+            b.style.color = '#94a3b8';
+            b.style.borderColor = 'var(--border)';
+        }
+    });
+
+    const activeBtn = mode === 'bpo' ? document.getElementById('radarBtnBPO') : (mode === 'tech' ? document.getElementById('radarBtnTech') : document.getElementById('radarBtnAll'));
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        if (mode === 'bpo') {
+            activeBtn.style.background = 'rgba(236,72,153,0.2)';
+            activeBtn.style.color = '#f472b6';
+            activeBtn.style.borderColor = 'rgba(236,72,153,0.4)';
+        } else if (mode === 'tech') {
+            activeBtn.style.background = 'rgba(59,130,246,0.2)';
+            activeBtn.style.color = '#60a5fa';
+            activeBtn.style.borderColor = 'rgba(59,130,246,0.4)';
+        } else {
+            activeBtn.style.background = 'var(--primary)';
+            activeBtn.style.color = '#fff';
+            activeBtn.style.borderColor = 'var(--primary)';
+        }
+    }
+
+    const bpoL = document.getElementById('bpoLaunchers');
+    const techL = document.getElementById('techLaunchers');
+    if (mode === 'bpo') {
+        if (bpoL) bpoL.style.display = 'block';
+        if (techL) techL.style.display = 'none';
+        const t = document.getElementById('hunterTitle');
+        if (t) t.innerText = "🎧 Radar Opportunités Centres d'Appels & Back-Office (Rabat, Salé & Remote)";
+    } else if (mode === 'tech') {
+        if (bpoL) bpoL.style.display = 'none';
+        if (techL) techL.style.display = 'block';
+        const t = document.getElementById('hunterTitle');
+        if (t) t.innerText = "💻 Radar Opportunités Tech, IT & Data (React, Python, Cloud & IA)";
+    } else {
+        if (bpoL) bpoL.style.display = 'block';
+        if (techL) techL.style.display = 'block';
+        const t = document.getElementById('hunterTitle');
+        if (t) t.innerText = "🌐 Radar Global Multi-Plateformes (Centres d'Appels + Tech + Public)";
+    }
+
+    applySubFilter(mode === 'all' ? 'all' : mode);
+}
+
+function applySubFilter(filterType) {
+    currentSubFilter = filterType;
+    ['chipAll', 'chipBPO', 'chipTech', 'chipRabat', 'chipRemote'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.classList.remove('active');
+    });
+    const map = { all: 'chipAll', bpo: 'chipBPO', tech: 'chipTech', rabat: 'chipRabat', remote: 'chipRemote' };
+    const btn = document.getElementById(map[filterType]);
+    if (btn) btn.classList.add('active');
+
+    filterAndRenderHuntedJobs();
+}
+
+function filterAndRenderHuntedJobs() {
+    let filtered = [...cachedHuntedJobs];
+
+    if (currentSubFilter === 'bpo') {
+        filtered = filtered.filter(j => j.category === 'bpo' || j.track === 'support_ops');
+    } else if (currentSubFilter === 'tech') {
+        filtered = filtered.filter(j => j.category !== 'bpo' && j.track !== 'support_ops');
+    } else if (currentSubFilter === 'rabat') {
+        filtered = filtered.filter(j => {
+            const loc = (j.location || '').toLowerCase();
+            return loc.includes('rabat') || loc.includes('salé') || loc.includes('sale') || loc.includes('technopolis');
+        });
+    } else if (currentSubFilter === 'remote') {
+        filtered = filtered.filter(j => {
+            const loc = (j.location || '').toLowerCase();
+            const tit = (j.title || '').toLowerCase();
+            return loc.includes('télé') || loc.includes('teletravail') || loc.includes('remote') || tit.includes('télétravail') || tit.includes('remote');
+        });
+    }
+
+    if (currentHunterSearch) {
+        filtered = filtered.filter(j => {
+            const t = (j.title || '').toLowerCase();
+            const c = (j.company || '').toLowerCase();
+            const l = (j.location || '').toLowerCase();
+            const s = (j.source || '').toLowerCase();
+            const skills = (j.matched_skills || []).join(' ').toLowerCase();
+            return t.includes(currentHunterSearch) || c.includes(currentHunterSearch) || l.includes(currentHunterSearch) || s.includes(currentHunterSearch) || skills.includes(currentHunterSearch);
+        });
+    }
+
+    filtered.sort((a, b) => {
+        let res = 0;
+        if (currentHunterSort === 'ats_desc') {
+            res = (b.ats_score || 0) - (a.ats_score || 0);
+        } else if (currentHunterSort === 'ats_asc') {
+            res = (a.ats_score || 0) - (b.ats_score || 0);
+        } else if (currentHunterSort === 'company_asc') {
+            res = (a.company || '').localeCompare(b.company || '', 'fr', {sensitivity: 'base'});
+        } else if (currentHunterSort === 'company_desc') {
+            res = (b.company || '').localeCompare(a.company || '', 'fr', {sensitivity: 'base'});
+        } else if (currentHunterSort === 'title_asc') {
+            res = (a.title || '').localeCompare(b.title || '', 'fr', {sensitivity: 'base'});
+        } else if (currentHunterSort === 'title_desc') {
+            res = (b.title || '').localeCompare(a.title || '', 'fr', {sensitivity: 'base'});
+        } else if (currentHunterSort === 'location_asc') {
+            res = (a.location || '').localeCompare(b.location || '', 'fr', {sensitivity: 'base'});
+        } else if (currentHunterSort === 'source_asc') {
+            res = (a.source || '').localeCompare(b.source || '', 'fr', {sensitivity: 'base'});
+        }
+        return res;
+    });
+
+    const visibleCount = document.getElementById('hunterVisibleCount');
+    if (visibleCount) visibleCount.innerText = filtered.length;
+
+    renderHuntedJobs(filtered);
+}
+
+async function loadHuntedJobs() {
+    try {
+        const res = await fetch('/api/hunter/jobs');
+        const data = await res.json();
+        cachedHuntedJobs = data.jobs || [];
+        setRadarFilter(currentRadarMode);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function scanBPOLive() {
+    const btn = document.getElementById('btnScanBPO');
+    const statusText = document.getElementById('hunterStatusText');
+    if (btn) { btn.disabled = true; btn.innerText = '⏳ Scan BPO en cours...'; }
+    if (statusText) statusText.innerText = "Scanning live MonCallCenter.ma, Rekrute BPO, Marocannonces et LinkedIn BPO pour Rabat, Salé et Télétravail Maroc...";
+
+    try {
+        const res = await fetch('/api/hunter/scan_bpo', { method: 'POST' });
+        const data = await res.json();
+        if (data.jobs) {
+            cachedHuntedJobs = data.jobs;
+            setRadarFilter('bpo');
+            if (statusText) statusText.innerText = `✅ Scan BPO terminé ! ${data.bpo_count || 0} offres Centres d'Appels & Back-Office sur-mesure prêtes (Rabat/Salé/Remote).`;
+        }
+    } catch (e) {
+        alert('Erreur lors du scan BPO: ' + e.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = "🎧 Scanner Centres d'Appels & Back-Office (Live)"; }
+    }
+}
+
+async function scanTechLive() {
+    const btn = document.getElementById('btnScanTech');
+    const statusText = document.getElementById('hunterStatusText');
+    if (btn) { btn.disabled = true; btn.innerText = '⏳ Scan Tech en cours...'; }
+
+    try {
+        const res = await fetch('/api/hunter/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: 'tech', min_score: 65 })
+        });
+        const data = await res.json();
+        if (data.jobs) {
+            cachedHuntedJobs = data.jobs;
+            setRadarFilter('tech');
+            if (statusText) statusText.innerText = `✅ Scan Tech terminé avec succès ! ${data.jobs.length} postes tech répertoriés.`;
+        }
+    } catch (e) {
+        alert('Erreur lors du scan Tech: ' + e.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = '💻 Scanner Tech & IT'; }
+    }
+}
+
+async function scanLiveJobs() {
+    const btn = document.getElementById('btnScanAll');
+    const statusText = document.getElementById('hunterStatusText');
+    if (btn) { btn.disabled = true; btn.innerText = '⏳ Scan Global...'; }
+
+    try {
+        const res = await fetch('/api/hunter/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: 'all', min_score: 65 })
+        });
+        const data = await res.json();
+        if (data.jobs) {
+            cachedHuntedJobs = data.jobs;
+            setRadarFilter('all');
+            if (statusText) statusText.innerText = `✅ Scan Global terminé ! ${data.jobs.length} offres multi-plateformes prêtes.`;
+        }
+    } catch (e) {
+        alert('Erreur: ' + e.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerText = '⚡ Scanner Tout'; }
+    }
+}
+
+function renderHuntedJobs(jobs) {
+    const container = document.getElementById('jobFeed');
+    
+    // Update badge counts
+    const bpoCount = cachedHuntedJobs.filter(j => j.category === 'bpo' || j.track === 'support_ops').length;
+    const techCount = cachedHuntedJobs.length - bpoCount;
+    if (document.getElementById('countAll')) document.getElementById('countAll').innerText = cachedHuntedJobs.length;
+    if (document.getElementById('countBPO')) document.getElementById('countBPO').innerText = bpoCount;
+    if (document.getElementById('countTech')) document.getElementById('countTech').innerText = techCount;
+
+    if (!jobs || jobs.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8;">Aucune offre trouvée pour ce filtre. Cliquez sur un bouton de scan ci-dessus pour actualiser !</div>';
+        return;
+    }
+
+    container.innerHTML = jobs.map((j, index) => {
+        const atsClass = j.ats_score >= 80 ? 'ats-high' : 'ats-med';
+        const isBpo = j.category === 'bpo' || j.track === 'support_ops';
+        
+        let categoryTag = '';
+        if (isBpo) {
+            categoryTag = `<span class="tag" style="background: rgba(236,72,153,0.15); color: #f472b6; border: 1px solid rgba(236,72,153,0.3);">🎧 Back-Office &amp; Client</span>`;
+        } else {
+            const trackLabels = { 'ai_ml': 'AI & Data', 'web_dev': 'Full-Stack Web' };
+            categoryTag = `<span class="tag tag-track">💻 ${trackLabels[j.track] || 'Tech & IT'}</span>`;
+        }
+
+        return `
+        <div class="job-card" style="${isBpo ? 'border-left: 3px solid #ec4899;' : 'border-left: 3px solid #3b82f6;'}">
+            <div class="job-info">
+                <h3>
+                    ${escapeHtml(j.title)}
+                    <span class="ats-badge ${atsClass}">🎯 ${j.ats_score}% ATS Match</span>
+                </h3>
+                <div class="job-meta">
+                    <span>🏢 <strong>${escapeHtml(j.company)}</strong></span>
+                    <span>📍 ${escapeHtml(j.location || 'Rabat')}</span>
+                    ${categoryTag}
+                    <span class="tag tag-source">${j.source}</span>
+                </div>
+                <div class="tag-group" style="margin-top: 8px;">
+                    ${(j.matched_skills || []).slice(0, 5).map(s => `<span class="tag tag-matched">${s}</span>`).join('')}
+                    ${isBpo ? '<span class="tag" style="background: rgba(16,185,129,0.1); color: #34d399;">CDI Foundever (FedEx)</span>' : ''}
+                </div>
+            </div>
+            <div class="job-actions">
+                <button class="btn-primary" onclick="openJobModal('${escapeHtml(j.id)}')">📂 Pack &amp; CV</button>
+                <a href="/api/apply/pdf/${encodeURIComponent(j.id)}" target="_blank" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; padding: 9px 12px; background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);" title="Télécharger le CV 1 Page en PDF Vectoriel">📥 PDF</a>
+                <a href="${j.url}" target="_blank" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; padding: 9px 13px;">🌐 Postuler ↗</a>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function openJobModal(jobIdOrIndex) {
+    let job = cachedHuntedJobs.find(j => j.id === jobIdOrIndex);
+    if (!job && typeof jobIdOrIndex === 'number') {
+        job = cachedHuntedJobs[jobIdOrIndex];
+    }
+    if (!job) return;
+
+    currentModalJobId = job.id;
+    document.getElementById('modalJobTitle').innerText = job.title;
+    document.getElementById('modalCompanyMeta').innerText = `${job.company} • ${job.location || 'Rabat'} • ${job.source}`;
+    
+    // Fill iframe
+    const iframe = document.getElementById('modalIframe');
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(job.html_resume);
+    doc.close();
+
+    // Fill cover letter and DM
+    document.getElementById('modalCoverLetter').innerText = job.cover_letter;
+    document.getElementById('modalRecruiterDm').innerText = job.recruiter_dm;
+
+    document.getElementById('appModal').style.display = 'flex';
+}
+
+function downloadCurrentJobPdf() {
+    if (!currentModalJobId) return;
+    window.open('/api/apply/pdf/' + encodeURIComponent(currentModalJobId), '_blank');
+}
+
+function closeModal() {
+    document.getElementById('appModal').style.display = 'none';
+}
+
+function closeModalOnBackdrop(e) {
+    if (e.target.id === 'appModal') closeModal();
+}
+
+function switchModalTab(tabId) {
+    document.querySelectorAll('#appModal .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#appModal .tab-content').forEach(c => c.classList.remove('active'));
+
+    event.target.classList.add('active');
+    document.getElementById('mtab-' + tabId).classList.add('active');
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Single Tailor Scripts
+function loadSample() {
+    document.getElementById("companyInput").value = "InnovTech Solutions";
+    document.getElementById("roleInput").value = "Full-Stack Software Engineer (React / Python)";
+    document.getElementById("langSelect").value = "auto";
+    document.getElementById("jobDescInput").value = `We are looking for a talented Full-Stack Software Engineer to join our growing engineering team.
+Responsibilities:
+- Build high-performance frontend interfaces using React, JavaScript (ES6+), and modern CSS frameworks (Tailwind CSS).
+- Design and integrate scalable REST APIs in Python or Java.
+- Work closely with data teams to integrate predictive analytics and Machine Learning model inference into our platform.
+- Write clean code, maintain version control with Git/GitHub, and participate in code reviews.
+- Troubleshoot bugs and ensure system reliability and performance.
+
+Requirements:
+- Degree in Computer Science, Software Engineering, or related technical field.
+- Hands-on experience with React, RESTful architectures, and SQL databases.
+- Familiarity with Python and data processing is a strong plus.
+- Excellent communication skills (English or French).`;
+}
+
+async function tailorApplication() {
+    const jobDesc = document.getElementById("jobDescInput").value.trim();
+    const company = document.getElementById("companyInput").value.trim();
+    const role = document.getElementById("roleInput").value.trim();
+    const lang = document.getElementById("langSelect").value;
+    const btn = document.getElementById("btnTailor");
+
+    if (!jobDesc) {
+        alert("Please paste a job description first.");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "⏳ Processing...";
+
+    try {
+        const res = await fetch("/api/tailor", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ job_desc: jobDesc, company, role, lang })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to process");
+
+        renderTailorResults(data);
+    } catch (err) {
+        alert("Error: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "🚀 Analyze & Tailor 1-Page CV";
+    }
+}
+
+function renderTailorResults(data) {
+    document.getElementById("emptyView").style.display = "none";
+    document.getElementById("resultsView").style.display = "block";
+
+    document.getElementById("atsScoreVal").innerText = data.ats_score + "%";
+    
+    const trackNames = {
+        "ai_ml": "Data Science & AI",
+        "web_dev": "Full-Stack Web",
+        "support_ops": "Tech Support / Ops"
+    };
+    document.getElementById("trackVal").innerText = trackNames[data.track] || data.track;
+    document.getElementById("langVal").innerText = data.lang === "fr" ? "Français 🇫🇷" : "English 🇬🇧";
+
+    const matchedContainer = document.getElementById("matchedTags");
+    matchedContainer.innerHTML = data.matched_skills.map(s => `<span class="tag tag-matched">${s}</span>`).join('') || '<span style="font-size: 12px; color: #94a3b8;">None</span>';
+
+    document.getElementById("markdownOutput").innerText = data.markdown_resume;
+    document.getElementById("coverLetterOutput").innerText = data.cover_letter;
+    document.getElementById("recruiterDmOutput").innerText = data.recruiter_dm;
+
+    const iframe = document.getElementById("cvIframe");
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(data.html_resume);
+    doc.close();
+}
+
+function switchTab(tabId) {
+    document.querySelectorAll('#view-tailor .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#view-tailor .tab-content').forEach(c => c.classList.remove('active'));
+
+    event.target.classList.add("active");
+    document.getElementById("tab-" + tabId).classList.add("active");
+}
+
+function copyText(elemId) {
+    const text = document.getElementById(elemId).innerText;
+    navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
+}
+
+function printCv(iframeId) {
+    const iframe = document.getElementById(iframeId);
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+}
+
+// Initial load
+loadHuntedJobs();
+</script>
+</body>
+</html>
