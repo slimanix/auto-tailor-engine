@@ -285,7 +285,7 @@ def send_application_email():
 
 @app.route("/api/apply/pdf/<job_id>", methods=["GET"])
 def get_application_pdf(job_id):
-    """Download the 1-page A4 PDF CV for a given job."""
+    """Download the 1-page A4 PDF CV for a given job, with graceful HTML print fallback on serverless."""
     app_dir = os.path.join(base_dir, "applications")
     if os.path.exists(app_dir):
         for folder in os.listdir(app_dir):
@@ -301,7 +301,23 @@ def get_application_pdf(job_id):
                             mimetype="application/pdf",
                             headers={"Content-Disposition": f"attachment;filename=CV_Abderrahmane_{job_id}.pdf"}
                         )
-    return jsonify({"error": "PDF not found"}), 404
+                elif os.path.exists(html_path):
+                    with open(html_path, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    print_script = "<script>window.onload = function() { window.print(); }</script></body>"
+                    content = content.replace("</body>", print_script)
+                    return Response(content, mimetype="text/html")
+
+    # Fallback to cached jobs if applications directory is empty (e.g. serverless bundle)
+    jobs = hunter.load_cached_jobs()
+    for j in jobs:
+        if j.get("id") == job_id and j.get("html_resume"):
+            content = j["html_resume"]
+            print_script = "<script>window.onload = function() { window.print(); }</script></body>"
+            content = content.replace("</body>", print_script)
+            return Response(content, mimetype="text/html")
+
+    return jsonify({"error": "Application not found"}), 404
 
 @app.route("/export/html", methods=["POST"])
 def export_html():

@@ -44,17 +44,27 @@ class AutoApplier:
     # ── Log Management ─────────────────────────────────────────────────────
 
     def load_applied_log(self) -> List[Dict[str, Any]]:
-        if os.path.exists(self.log_file):
+        tmp_log = os.path.join("/tmp", "applications_log.json")
+        target = tmp_log if os.path.exists(tmp_log) else self.log_file
+        if os.path.exists(target):
             try:
-                with open(self.log_file, "r", encoding="utf-8") as f:
+                with open(target, "r", encoding="utf-8") as f:
                     return json.load(f)
             except Exception:
                 return []
         return []
 
     def save_applied_log(self, log_entries: List[Dict[str, Any]]) -> None:
-        with open(self.log_file, "w", encoding="utf-8") as f:
-            json.dump(log_entries, f, ensure_ascii=False, indent=2)
+        try:
+            with open(self.log_file, "w", encoding="utf-8") as f:
+                json.dump(log_entries, f, ensure_ascii=False, indent=2)
+        except OSError:
+            tmp_log = os.path.join("/tmp", "applications_log.json")
+            try:
+                with open(tmp_log, "w", encoding="utf-8") as f:
+                    json.dump(log_entries, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
 
     # ── Email Sending ──────────────────────────────────────────────────────
 

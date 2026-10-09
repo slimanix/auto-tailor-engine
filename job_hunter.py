@@ -953,14 +953,24 @@ class JobHunter:
         return all_jobs
 
     def load_cached_jobs(self) -> List[Dict[str, Any]]:
-        if os.path.exists(self.jobs_cache_file):
+        tmp_cache = os.path.join("/tmp", "hunted_jobs.json")
+        target = tmp_cache if os.path.exists(tmp_cache) else self.jobs_cache_file
+        if os.path.exists(target):
             try:
-                with open(self.jobs_cache_file, "r", encoding="utf-8") as f:
+                with open(target, "r", encoding="utf-8") as f:
                     return json.load(f)
             except Exception:
                 return []
         return []
 
     def save_cached_jobs(self, jobs: List[Dict[str, Any]]) -> None:
-        with open(self.jobs_cache_file, "w", encoding="utf-8") as f:
-            json.dump(jobs[:150], f, ensure_ascii=False, indent=2)
+        try:
+            with open(self.jobs_cache_file, "w", encoding="utf-8") as f:
+                json.dump(jobs[:150], f, ensure_ascii=False, indent=2)
+        except OSError:
+            tmp_cache = os.path.join("/tmp", "hunted_jobs.json")
+            try:
+                with open(tmp_cache, "w", encoding="utf-8") as f:
+                    json.dump(jobs[:150], f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
