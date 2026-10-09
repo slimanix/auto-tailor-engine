@@ -103,11 +103,33 @@ def sort_applications(apps, sort_key="date_desc"):
         return sorted(apps, key=lambda a: (a.get("status") or "").lower())
     return apps
 
+def ensure_portfolio_in_html(html: str) -> str:
+    if not html or "portfolio-showcase-psi-sooty.vercel.app" in html:
+        return html
+    port_html = ' &nbsp;•&nbsp; Portfolio: <a href="https://portfolio-showcase-psi-sooty.vercel.app">portfolio-showcase-psi-sooty.vercel.app</a>'
+    if "github.com/slimanix</a>" in html:
+        return html.replace("github.com/slimanix</a>", f"github.com/slimanix</a>{port_html}")
+    elif "slimanix.dev</a>" in html:
+        return html.replace("slimanix.dev</a>", 'portfolio-showcase-psi-sooty.vercel.app</a>')
+    elif "github.com" in html:
+        return re.sub(r'(GitHub:[^<]*<a[^>]*>[^<]*</a>)', rf'\1{port_html}', html, count=1, flags=re.IGNORECASE)
+    elif "contact-line" in html and "</div>" in html:
+        return html.replace("</div>", f"{port_html}</div>", 1)
+    return html
+
+def sanitize_job_resumes(job: dict) -> dict:
+    if not job:
+        return job
+    if "html_resume" in job and job["html_resume"]:
+        job["html_resume"] = ensure_portfolio_in_html(job["html_resume"])
+    return job
+
 # ── Hunter ───────────────────────────────────────────────────────────────────
 
 @app.route("/api/hunter/jobs", methods=["GET"])
 def get_hunted_jobs():
     jobs = hunter.load_cached_jobs()
+    jobs = [sanitize_job_resumes(j) for j in jobs]
     sort_key = request.args.get("sort", "ats_desc")
     jobs = sort_jobs(jobs, sort_key)
     return jsonify({"jobs": jobs, "count": len(jobs), "sorted_by": sort_key})
@@ -308,7 +330,7 @@ def get_application_pdf(job_id):
                         )
                 elif os.path.exists(html_path):
                     with open(html_path, "r", encoding="utf-8") as f:
-                        content = f.read()
+                        content = ensure_portfolio_in_html(f.read())
                     print_script = "<script>window.onload = function() { window.print(); }</script></body>"
                     content = content.replace("</body>", print_script)
                     return Response(content, mimetype="text/html")
@@ -317,7 +339,7 @@ def get_application_pdf(job_id):
     jobs = hunter.load_cached_jobs()
     for j in jobs:
         if j.get("id") == job_id and j.get("html_resume"):
-            content = j["html_resume"]
+            content = ensure_portfolio_in_html(j["html_resume"])
             print_script = "<script>window.onload = function() { window.print(); }</script></body>"
             content = content.replace("</body>", print_script)
             return Response(content, mimetype="text/html")
