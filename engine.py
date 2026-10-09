@@ -311,7 +311,7 @@ Abderrahmane El Idrissi Slimani
         lines = [
             f"# {p['name'].upper()}",
             f"**{p['location']}** | **{p['phone']}** | **{p['email']}**",
-            f"[LinkedIn]({p['linkedin']}) | [GitHub]({p['github']})\n",
+            f"[LinkedIn]({p['linkedin']}) | [GitHub]({p['github']}) | [Portfolio]({p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')})\n",
             "---",
             f"### {summary}\n",
             f"## {skills_sec}",
@@ -667,7 +667,7 @@ Abderrahmane El Idrissi Slimani
         <div class="subtitle">{display_title}</div>
         <div class="contact-line">
             {p['location']} &nbsp;•&nbsp; {p['phone']} &nbsp;•&nbsp; {p['email']}<br>
-            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/slimanix</a>
+            LinkedIn: <a href="{p['linkedin']}">linkedin.com/in/abderrahmane-el-idrissi-slimani</a> &nbsp;•&nbsp; GitHub: <a href="{p['github']}">github.com/slimanix</a> &nbsp;•&nbsp; Portfolio: <a href="{p.get('portfolio', 'https://portfolio-showcase-psi-sooty.vercel.app')}">slimanix.dev</a>
         </div>
     </div>
 
